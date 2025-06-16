@@ -5,7 +5,7 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import RazorpayLogo from "./Razorpaylogo";
 import Timer from "./Timer";
 
-const UPI_ID = "mrsonukr@ybl";
+const UPI_ID = "insta999guru@ibl";
 
 export default function Qrcode() {
   const { token } = useParams();
