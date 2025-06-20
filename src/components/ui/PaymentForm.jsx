@@ -24,11 +24,12 @@ export default function PaymentForm() {
     setErrors((prev) => ({ ...prev, amount: "" }));
   };
 
-  const generatePaymentToken = (amount) => {
-    // Simple token generation - in production use a more secure method
+  const generatePaymentToken = (amount, selectedUpiId) => {
+    // Include UPI ID in token for consistency
     const timestamp = Date.now();
     const randomStr = Math.random().toString(36).substring(7);
-    return btoa(`${amount}-${timestamp}-${randomStr}`);
+    const upiIndex = siteConfig.upiIds.indexOf(selectedUpiId);
+    return btoa(`${amount}-${timestamp}-${randomStr}-${upiIndex}`);
   };
 
   const handleSubmit = async (e) => {
@@ -51,7 +52,9 @@ export default function PaymentForm() {
 
     if (valid) {
       setIsLoading(true);
-      const paymentToken = generatePaymentToken(amount);
+      // Select random UPI ID for this payment
+      const selectedUpiId = siteConfig.getRandomUpiId();
+      const paymentToken = generatePaymentToken(amount, selectedUpiId);
       await new Promise(resolve => setTimeout(resolve, 1500));
       navigate(`/payment/${paymentToken}`);
       setIsLoading(false);

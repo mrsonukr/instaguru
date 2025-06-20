@@ -10,6 +10,7 @@ export default function Qrcode() {
   const { token } = useParams();
   const [amountError, setAmountError] = useState("");
   const [amount, setAmount] = useState("");
+  const [selectedUpiId, setSelectedUpiId] = useState("");
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const navigate = useNavigate();
@@ -18,11 +19,20 @@ export default function Qrcode() {
     try {
       // Decode and validate token
       const decodedToken = atob(token);
-      const [encodedAmount] = decodedToken.split('-');
+      const tokenParts = decodedToken.split('-');
+      const [encodedAmount, , , upiIndex] = tokenParts;
       const parsedAmount = parseInt(encodedAmount, 10);
       
       if (parsedAmount && parsedAmount >= siteConfig.minimumAmount) {
         setAmount(parsedAmount.toString());
+        
+        // Get UPI ID from token or fallback to random selection
+        if (upiIndex !== undefined && siteConfig.upiIds[parseInt(upiIndex)]) {
+          setSelectedUpiId(siteConfig.upiIds[parseInt(upiIndex)]);
+        } else {
+          // Fallback to random UPI ID if token doesn't contain valid index
+          setSelectedUpiId(siteConfig.getRandomUpiId());
+        }
       } else {
         setAmountError("Invalid payment amount");
         setTimeout(() => navigate("/addfund"), 2000);
@@ -47,7 +57,7 @@ export default function Qrcode() {
     navigate("/wallet");
   };
 
-  if (amountError || !amount) {
+  if (amountError || !amount || !selectedUpiId) {
     return (
       <div className="bg-gray-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl p-8 shadow-lg max-w-md w-full space-y-6 relative">
@@ -67,7 +77,7 @@ export default function Qrcode() {
               className="text-red-600 bg-red-50 p-2 rounded-md mt-2 text-sm"
               aria-live="polite"
             >
-              {amountError || "Loading amount..."}
+              {amountError || "Loading payment details..."}
             </p>
           </div>
         </div>
@@ -75,7 +85,7 @@ export default function Qrcode() {
     );
   }
 
-  const paymentLink = `upi://pay?pa=${siteConfig.upiId}&pn=${siteConfig.siteName}&am=${amount}&cu=INR&tn=ORD4575224455`;
+  const paymentLink = `upi://pay?pa=${selectedUpiId}&pn=${siteConfig.siteName}&am=${amount}&cu=INR&tn=ORD4575224455`;
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
@@ -96,8 +106,11 @@ export default function Qrcode() {
           <h2 className="text-lg font-semibold text-gray-800">
             Scan to Pay ₹{amount}
           </h2>
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-sm text-gray-500 mb-2">
             Use any UPI app to scan and pay
+          </p>
+          <p className="text-xs text-gray-400 mb-4">
+            Payment ID: {selectedUpiId}
           </p>
           <div className="flex-col flex items-center justify-center bg-blue-50 p-6 rounded-lg">
             <QRCode

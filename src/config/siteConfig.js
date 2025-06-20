@@ -11,8 +11,13 @@ const siteConfig = {
   supportPhone: "+91 82102 20189",
   whatsappNumber: "918210220189",
   
-  // Payment Configuration
-  upiId: "mrsonukr@ybl",
+  // Payment Configuration - Multiple UPI IDs
+  upiIds: [
+    "mrsonukr@ybl",
+    "instaguru@slice", 
+    "akbar3815@amazonpay",
+    "8F0QOK7Y9N63655@fbpe"
+  ],
   minimumAmount: 50,
   maximumAmount: 2500,
   
@@ -49,7 +54,12 @@ const siteConfig = {
   referralBonus: 10,
   
   // Logo path
-  logoPath: "/ic/logo.svg"
+  logoPath: "/ic/logo.svg",
+
+  // Helper function to get random UPI ID
+  getRandomUpiId: function() {
+    return this.upiIds[Math.floor(Math.random() * this.upiIds.length)];
+  }
 };
 
 export default siteConfig;
