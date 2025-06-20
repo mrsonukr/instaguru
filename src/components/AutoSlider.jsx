@@ -5,30 +5,7 @@ import "swiper/css/pagination";
 import { Pagination, Autoplay } from "swiper/modules";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import Skeleton from "./ui/Skeleton";
-
-const mobileBanners = [
-  {
-    id: 1,
-    src: "/banner/banner-1.webp",
-    alt: "Banner 1",
-    width: 1000,
-    height: 367
-  },
-  {
-    id: 2,
-    src: "/banner/banner-2.webp",
-    alt: "Banner 2",
-    width: 1000,
-    height: 367
-  },
-  {
-    id: 3,
-    src: "/banner/banner-3.webp",
-    alt: "Banner 3",
-    width: 1000,
-    height: 367
-  },
-];
+import siteConfig from "../config/siteConfig";
 
 const AutoSlider = () => {
   const [loadedImages, setLoadedImages] = useState({});
@@ -47,7 +24,7 @@ const AutoSlider = () => {
         modules={[Pagination, Autoplay]}
         className="rounded-xl overflow-hidden"
       >
-        {mobileBanners.map((banner) => (
+        {siteConfig.banners.map((banner) => (
           <SwiperSlide key={banner.id}>
             <div className="relative w-full aspect-[2000/734]">
               {!loadedImages[banner.id] && (

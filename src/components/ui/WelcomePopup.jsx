@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
 import { X } from "lucide-react";
+import siteConfig from "../../config/siteConfig";
 
 const WelcomePopup = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,7 +17,7 @@ const WelcomePopup = () => {
       const welcomeBonus = {
         id: "welcome_bonus",
         type: "credit",
-        amount: 10,
+        amount: siteConfig.welcomeBonus,
         date: new Date().toISOString(), // Save full ISO date-time
         description: "Welcome Bonus",
       };
@@ -53,7 +54,7 @@ const WelcomePopup = () => {
           <h2 className="text-xl font-bold text-green-600 mb-3 text-center">
             🎉 Congratulations!
           </h2>
-          <p className="text-center font-semibold text-gray-700">You got ₹10</p>
+          <p className="text-center font-semibold text-gray-700">You got ₹{siteConfig.welcomeBonus}</p>
         </div>
       </div>
     </div>

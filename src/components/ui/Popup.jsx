@@ -1,5 +1,6 @@
 import { X, AlertTriangle, CreditCard } from "lucide-react";
 import { Link } from "react-router-dom";
+import siteConfig from "../../config/siteConfig";
 
 const Popup = ({ isVisible, onClose }) => {
   return (
@@ -22,7 +23,7 @@ const Popup = ({ isVisible, onClose }) => {
             </h3>
             <p className="text-lg mt-2 text-center text-gray-700">
               Your balance is currently{" "}
-              <strong className="text-green-500">₹10</strong>.
+              <strong className="text-green-500">₹{siteConfig.welcomeBonus}</strong>.
             </p>
             <p className="text-sm mt-2 text-center text-gray-400">
               आपके पास पर्याप्त शेष नहीं है। कृपया पहले फंड जोड़ें।

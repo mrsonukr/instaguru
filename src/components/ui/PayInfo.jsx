@@ -1,16 +1,18 @@
 import { Clock } from "lucide-react";
+import siteConfig from "../../config/siteConfig";
+
 const PayInfo = () => {
   return (
     <div className="font-semibold text-slate-800 ">
       <h3>Instruction</h3>
       <ul className="list-decimal pl-5 space-y-2 mt-4 text-sm">
         <li>
-          Please enter an amount above ₹50 and then click "Pay Now".{" "}
-          <span className="text-green-600">(Min 50Rs)</span>
+          Please enter an amount above ₹{siteConfig.minimumAmount} and then click "Pay Now".{" "}
+          <span className="text-green-600">(Min {siteConfig.minimumAmount}Rs)</span>
         </li>
         <li>Scan QR Code and Pay</li>
         <li>
-          Payments are processed automatically; you don’t need to provide UTR
+          Payments are processed automatically; you don't need to provide UTR
           information.
         </li>
       </ul>

@@ -4,8 +4,7 @@ import QRCode from "react-qr-code";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import RazorpayLogo from "./Razorpaylogo";
 import Timer from "./Timer";
-
-const UPI_ID = "mrsonukr@ybl";
+import siteConfig from "../../config/siteConfig";
 
 export default function Qrcode() {
   const { token } = useParams();
@@ -22,7 +21,7 @@ export default function Qrcode() {
       const [encodedAmount] = decodedToken.split('-');
       const parsedAmount = parseInt(encodedAmount, 10);
       
-      if (parsedAmount && parsedAmount >= 50) {
+      if (parsedAmount && parsedAmount >= siteConfig.minimumAmount) {
         setAmount(parsedAmount.toString());
       } else {
         setAmountError("Invalid payment amount");
@@ -76,7 +75,7 @@ export default function Qrcode() {
     );
   }
 
-  const paymentLink = `upi://pay?pa=${UPI_ID}&pn=Instawala&am=${amount}&cu=INR&tn=ORD4575224455`;
+  const paymentLink = `upi://pay?pa=${siteConfig.upiId}&pn=${siteConfig.siteName}&am=${amount}&cu=INR&tn=ORD4575224455`;
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FiMenu, FiHome, FiCreditCard, FiPhone, FiInfo, FiShare2 } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import siteConfig from "../config/siteConfig";
 
 const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -16,8 +17,8 @@ const Header = () => {
         <div className="logo">
           <Link to="/">
             <img
-              src="/ic/instawalla-logo.svg"
-              alt="InstaWala Logo"
+              src={siteConfig.logoPath}
+              alt={`${siteConfig.siteName} Logo`}
               className="h-8 w-auto"
             />
           </Link>
@@ -45,8 +46,8 @@ const Header = () => {
         }`}
       >
         <img
-          src="/ic/instawalla-logo.svg"
-          alt="InstaWala Logo"
+          src={siteConfig.logoPath}
+          alt={`${siteConfig.siteName} Logo`}
           className="mx-6 mb-4 h-8 w-auto"
         />
         <ul className="list-none p-0 m-0">
@@ -65,7 +66,7 @@ const Header = () => {
               className="flex items-center p-4 border-b border-gray-200 hover:bg-green-50 transition-colors duration-200 gap-3 text-gray-800 font-medium no-underline"
             >
               <FiCreditCard className="w-6 h-6 text-green-500" />
-              Wallet: ₹ 10.00
+              Wallet: ₹ {siteConfig.welcomeBonus}.00
             </Link>
           </li>
           <li>

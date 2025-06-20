@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "../components/Header";
 import { Users, BadgeCheck, Tv, ShieldCheck, Smile } from "lucide-react";
+import siteConfig from "../config/siteConfig";
 
 const About = () => {
   return (
@@ -10,7 +11,7 @@ const About = () => {
         <section className="text-center mb-16">
           <h1 className="text-2xl font-bold text-gray-800 mb-4">About Us</h1>
           <p className="text-base text-gray-600 max-w-2xl mx-auto">
-            Welcome to <span className="font-semibold ">Instaguru</span> — the
+            Welcome to <span className="font-semibold ">{siteConfig.siteName}</span> — the
             leading SMM panel trusted by thousands. For over two years, we've
             been empowering brands, influencers, and businesses with real
             followers, active subscribers, and premium OTT services that drive
@@ -25,7 +26,7 @@ const About = () => {
           <p className="text-sm text-gray-700 max-w-3xl mx-auto text-center">
             To deliver authentic, high-quality social media marketing services
             that fuel genuine engagement. From social media to premium OTT, we
-            ’re committed to your digital success.
+            're committed to your digital success.
           </p>
         </section>
 
