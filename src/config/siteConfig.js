@@ -7,7 +7,7 @@ const siteConfig = {
   siteUrl: "https://instaguru.shop",
   
   // Contact Information
-  supportEmail: "help@instaguru.in",
+  supportEmail: "help@instaguru.shop",
   supportPhone: "+91 82102 20189",
   whatsappNumber: "918210220189",
   
