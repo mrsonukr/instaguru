@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { CheckCircle, XCircle, Loader2, Clock } from "lucide-react";
 
-const Timer = () => {
+const Timer = ({ onExpired }) => {
   // Example internal states (replace or update as needed)
   const [paymentState, setPaymentState] = useState("WAITING"); // WAITING, PROCESSING, SUCCESS, FAILED
   const [timeRemaining, setTimeRemaining] = useState(300); // seconds
@@ -22,8 +22,13 @@ const Timer = () => {
     if (paymentState === "WAITING" && timeRemaining > 0) {
       const timer = setTimeout(() => setTimeRemaining(timeRemaining - 1), 1000);
       return () => clearTimeout(timer);
+    } else if (paymentState === "WAITING" && timeRemaining === 0) {
+      // Timer expired
+      if (onExpired) {
+        onExpired();
+      }
     }
-  }, [paymentState, timeRemaining]);
+  }, [paymentState, timeRemaining, onExpired]);
 
   // Calculate time percentage for circular progress (assuming max 300 seconds)
   const timePercentage = (timeRemaining / 300) * 100;

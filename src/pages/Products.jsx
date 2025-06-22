@@ -5,6 +5,7 @@ import PBanner from "../components/ui/PBanner";
 import PackCard from "../components/ui/PackCard";
 import PackFilter from "../components/ui/PackFilter";
 import Suggestion from "../components/ui/Suggestion";
+import WelcomePopup from "../components/ui/WelcomePopup";
 import data from "../data/categories.json";
 import Footer from "../components/ui/Footer";
 
@@ -40,6 +41,7 @@ const Products = () => {
   return (
     <div>
       <Header />
+      <WelcomePopup />
       <Header />
       <div className="mt-20">
         <PBanner

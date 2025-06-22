@@ -1,15 +1,33 @@
 import React, { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
 import { X } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import siteConfig from "../../config/siteConfig";
 
 const WelcomePopup = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     // Check if user has already seen the popup
     const hasVisited = localStorage.getItem("hasVisited");
-    if (!hasVisited) {
+    
+    // Define pages where popup should show
+    const allowedPages = [
+      "/",
+      "/instagram", 
+      "/youtube", 
+      "/facebook", 
+      "/netflix", 
+      "/amazon-prime", 
+      "/spotify", 
+      "/telegram"
+    ];
+    
+    // Check if current page is in allowed pages
+    const shouldShowPopup = allowedPages.includes(location.pathname);
+    
+    if (!hasVisited && shouldShowPopup) {
       setIsOpen(true);
       localStorage.setItem("hasVisited", "true");
       
@@ -25,7 +43,7 @@ const WelcomePopup = () => {
 
       triggerConfetti();
     }
-  }, []);
+  }, [location.pathname]); // Add location.pathname as dependency
 
   const triggerConfetti = () => {
     confetti({

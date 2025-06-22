@@ -1,33 +1,92 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { PlusCircleIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
+import { Clock, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import Header from "../components/Header";
 
 const Wallet = () => {
   const [transactions, setTransactions] = useState([]);
 
   const walletAmount = transactions.reduce((sum, txn) => {
-    return txn.type === "credit" ? sum + txn.amount : sum - txn.amount;
+    // Only count successful credit transactions for wallet balance
+    if (txn.type === "credit") {
+      return sum + txn.amount;
+    } else if (txn.type === "debit") {
+      return sum - txn.amount;
+    }
+    return sum;
   }, 0);
 
+  // Function to update transaction status from processing to failed after 10 minutes
+  const checkAndUpdateProcessingTransactions = () => {
+    const paymentTransactions = JSON.parse(localStorage.getItem("paymentTransactions") || "[]");
+    let hasUpdates = false;
+
+    const updatedTransactions = paymentTransactions.map(txn => {
+      if (txn.status === "processing") {
+        const processingTime = new Date(txn.updatedAt || txn.date);
+        const now = new Date();
+        const timeDiff = (now - processingTime) / (1000 * 60); // difference in minutes
+
+        if (timeDiff >= 10) {
+          hasUpdates = true;
+          return {
+            ...txn,
+            status: "failed",
+            updatedAt: new Date().toISOString(),
+            description: `Payment Failed - ₹${txn.amount}`
+          };
+        }
+      }
+      return txn;
+    });
+
+    if (hasUpdates) {
+      localStorage.setItem("paymentTransactions", JSON.stringify(updatedTransactions));
+      return true;
+    }
+    return false;
+  };
+
   useEffect(() => {
-    const baseTransactions = [
-    
-    ];
+    const loadTransactions = () => {
+      // Check and update processing transactions first
+      checkAndUpdateProcessingTransactions();
 
-    const welcomeBonusTxn = localStorage.getItem("welcomeBonusTxn");
-    const welcomeBonus = welcomeBonusTxn ? JSON.parse(welcomeBonusTxn) : null;
+      const baseTransactions = [];
 
-    const allTxns = welcomeBonus
-      ? [welcomeBonus, ...baseTransactions]
-      : baseTransactions;
+      // Get welcome bonus transaction
+      const welcomeBonusTxn = localStorage.getItem("welcomeBonusTxn");
+      const welcomeBonus = welcomeBonusTxn ? JSON.parse(welcomeBonusTxn) : null;
 
-    // 🔽 Sort transactions by latest date first
-    const sortedTxns = allTxns.sort(
-      (a, b) => new Date(b.date) - new Date(a.date)
-    );
+      // Get payment transactions
+      const paymentTransactions = JSON.parse(localStorage.getItem("paymentTransactions") || "[]");
 
-    setTransactions(sortedTxns);
+      // Combine all transactions
+      const allTxns = [
+        ...(welcomeBonus ? [welcomeBonus] : []),
+        ...baseTransactions,
+        ...paymentTransactions
+      ];
+
+      // Sort transactions by latest date first
+      const sortedTxns = allTxns.sort(
+        (a, b) => new Date(b.date) - new Date(a.date)
+      );
+
+      setTransactions(sortedTxns);
+    };
+
+    loadTransactions();
+
+    // Set up interval to check processing transactions every minute
+    const interval = setInterval(() => {
+      if (checkAndUpdateProcessingTransactions()) {
+        loadTransactions(); // Reload if any updates were made
+      }
+    }, 60000); // Check every minute
+
+    return () => clearInterval(interval);
   }, []);
 
   // New function for relative time formatting
@@ -72,6 +131,99 @@ const Wallet = () => {
     });
   };
 
+  const getTransactionIcon = (txn) => {
+    if (txn.type === "payment_initiated") {
+      switch (txn.status) {
+        case "initiated":
+          return <Clock className="w-5 h-5 text-blue-500" />;
+        case "cancelled":
+          return <XCircle className="w-5 h-5 text-red-500" />;
+        case "expired":
+          return <Clock className="w-5 h-5 text-orange-500" />;
+        case "processing":
+          return <Loader2 className="w-5 h-5 text-yellow-500 animate-spin" />;
+        case "failed":
+          return <XCircle className="w-5 h-5 text-red-500" />;
+        case "completed":
+          return <CheckCircle className="w-5 h-5 text-green-500" />;
+        default:
+          return <Clock className="w-5 h-5 text-blue-500" />;
+      }
+    } else if (txn.type === "credit") {
+      return <ArrowRightIcon className="w-5 h-5 text-green-600 rotate-[135deg]" />;
+    } else if (txn.type === "debit") {
+      return <ArrowRightIcon className="w-5 h-5 text-red-500 -rotate-45" />;
+    }
+    return <ArrowRightIcon className="w-5 h-5 text-gray-500" />;
+  };
+
+  const getTransactionColor = (txn) => {
+    if (txn.type === "payment_initiated") {
+      switch (txn.status) {
+        case "initiated":
+          return "text-blue-600";
+        case "cancelled":
+          return "text-red-500";
+        case "expired":
+          return "text-orange-500";
+        case "processing":
+          return "text-yellow-600";
+        case "failed":
+          return "text-red-500";
+        case "completed":
+          return "text-green-600";
+        default:
+          return "text-blue-600";
+      }
+    } else if (txn.type === "credit") {
+      return "text-green-600";
+    } else if (txn.type === "debit") {
+      return "text-red-500";
+    }
+    return "text-gray-600";
+  };
+
+  const getStatusBadge = (txn) => {
+    if (txn.type === "payment_initiated") {
+      const statusColors = {
+        initiated: "bg-blue-100 text-blue-800",
+        cancelled: "bg-red-100 text-red-800",
+        expired: "bg-orange-100 text-orange-800",
+        processing: "bg-yellow-100 text-yellow-800",
+        failed: "bg-red-100 text-red-800",
+        completed: "bg-green-100 text-green-800"
+      };
+      
+      const statusLabels = {
+        initiated: "Pending",
+        cancelled: "Cancelled",
+        expired: "Expired",
+        processing: "Processing",
+        failed: "Failed",
+        completed: "Completed"
+      };
+
+      return (
+        <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[txn.status] || statusColors.initiated}`}>
+          {statusLabels[txn.status] || "Pending"}
+        </span>
+      );
+    }
+    return null;
+  };
+
+  // Professional transaction description formatting
+  const getTransactionDescription = (txn) => {
+    if (txn.type === "payment_initiated") {
+      return "Payment Request";
+    } else if (txn.type === "credit") {
+      return txn.description || "Credit";
+    } else if (txn.type === "debit") {
+      return txn.description || "Debit";
+    }
+    return txn.description || "Transaction";
+  };
+
   return (
     <>
       <Header />
@@ -108,28 +260,21 @@ const Wallet = () => {
                   className="flex items-center justify-between bg-green-100 rounded-lg p-4"
                 >
                   <div className="flex items-center gap-3">
-                    <ArrowRightIcon
-                      className={`w-5 h-5 ${
-                        txn.type === "credit"
-                          ? "text-green-600 rotate-[135deg]"
-                          : "text-red-500 -rotate-45"
-                      }`}
-                    />
+                    {getTransactionIcon(txn)}
                     <div>
-                      <p className="text-sm font-semibold text-gray-800">
-                        {txn.description}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-semibold text-gray-800">
+                          {getTransactionDescription(txn)}
+                        </p>
+                        {getStatusBadge(txn)}
+                      </div>
                       <p className="text-xs text-gray-600">
                         {formatRelativeTime(txn.date)}
                       </p>
                     </div>
                   </div>
-                  <div
-                    className={`text-sm font-bold ${
-                      txn.type === "credit" ? "text-green-600" : "text-red-500"
-                    }`}
-                  >
-                    {txn.type === "credit" ? "+" : "-"}₹{txn.amount}
+                  <div className={`text-sm font-bold ${getTransactionColor(txn)}`}>
+                    {txn.type === "credit" ? "+" : txn.type === "debit" ? "-" : ""}₹{txn.amount}
                   </div>
                 </li>
               ))

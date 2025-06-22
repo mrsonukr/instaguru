@@ -32,6 +32,31 @@ export default function PaymentForm() {
     return btoa(`${amount}-${timestamp}-${randomStr}-${upiIndex}`);
   };
 
+  const savePaymentTransaction = (amount, paymentToken, selectedUpiId) => {
+    const transaction = {
+      id: `payment_${Date.now()}`,
+      type: "payment_initiated",
+      amount: parseInt(amount),
+      date: new Date().toISOString(),
+      description: `Payment Initiated - ₹${amount}`,
+      status: "initiated",
+      paymentToken: paymentToken,
+      upiId: selectedUpiId,
+      name: name
+    };
+
+    // Get existing transactions
+    const existingTransactions = JSON.parse(localStorage.getItem("paymentTransactions") || "[]");
+    
+    // Add new transaction
+    existingTransactions.push(transaction);
+    
+    // Save back to localStorage
+    localStorage.setItem("paymentTransactions", JSON.stringify(existingTransactions));
+    
+    return transaction.id;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = { name: "", amount: "" };
@@ -55,6 +80,10 @@ export default function PaymentForm() {
       // Select random UPI ID for this payment
       const selectedUpiId = siteConfig.getRandomUpiId();
       const paymentToken = generatePaymentToken(amount, selectedUpiId);
+      
+      // Save payment transaction
+      savePaymentTransaction(amount, paymentToken, selectedUpiId);
+      
       await new Promise(resolve => setTimeout(resolve, 1500));
       navigate(`/payment/${paymentToken}`);
       setIsLoading(false);

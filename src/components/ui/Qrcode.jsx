@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import QRCode from "react-qr-code";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import RazorpayLogo from "./Razorpaylogo";
 import Timer from "./Timer";
 import siteConfig from "../../config/siteConfig";
@@ -13,7 +13,28 @@ export default function Qrcode() {
   const [selectedUpiId, setSelectedUpiId] = useState("");
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
+  const [paymentExpired, setPaymentExpired] = useState(false);
   const navigate = useNavigate();
+
+  const updatePaymentStatus = (status) => {
+    const existingTransactions = JSON.parse(localStorage.getItem("paymentTransactions") || "[]");
+    const updatedTransactions = existingTransactions.map(txn => {
+      if (txn.paymentToken === token) {
+        return {
+          ...txn,
+          status: status,
+          updatedAt: new Date().toISOString(),
+          description: status === "cancelled" 
+            ? `Payment Cancelled - ₹${txn.amount}` 
+            : status === "processing"
+            ? `Payment Processing - ₹${txn.amount}`
+            : txn.description
+        };
+      }
+      return txn;
+    });
+    localStorage.setItem("paymentTransactions", JSON.stringify(updatedTransactions));
+  };
 
   useEffect(() => {
     try {
@@ -41,11 +62,21 @@ export default function Qrcode() {
       setAmountError("Invalid payment token");
       setTimeout(() => navigate("/addfund"), 2000);
     }
-  }, [token, navigate]);
 
-  const handleBack = () => {
-    navigate("/addfund");
-  };
+    // Prevent browser back button
+    const handlePopState = (e) => {
+      e.preventDefault();
+      setShowCancelConfirm(true);
+      window.history.pushState(null, null, window.location.pathname);
+    };
+
+    window.history.pushState(null, null, window.location.pathname);
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [token, navigate]);
 
   const handleCancel = () => {
     setShowCancelConfirm(true);
@@ -53,21 +84,24 @@ export default function Qrcode() {
 
   const confirmCancel = async () => {
     setIsCancelling(true);
+    updatePaymentStatus("cancelled");
     await new Promise(resolve => setTimeout(resolve, 2000));
     navigate("/wallet");
   };
 
+  const handlePaymentExpired = () => {
+    // Update status to processing instead of expired
+    updatePaymentStatus("processing");
+    // Redirect to wallet after a short delay
+    setTimeout(() => {
+      navigate("/wallet");
+    }, 1000);
+  };
+
   if (amountError || !amount || !selectedUpiId) {
     return (
-      <div className="bg-gray-100 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl p-8 shadow-lg max-w-md w-full space-y-6 relative">
-          <button
-            onClick={handleBack}
-            className="absolute top-4 left-4 text-gray-600 hover:text-blue-600 transition focus:outline-none"
-            aria-label="Go back"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </button>
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl p-8 shadow-lg max-w-md w-full space-y-6">
           <div className="flex justify-center mb-4">
             <RazorpayLogo />
           </div>
@@ -89,15 +123,7 @@ export default function Qrcode() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl p-8 shadow-lg max-w-md w-full space-y-6 relative">
-        <button
-          onClick={handleBack}
-          className="absolute top-4 left-4 text-gray-600 hover:text-blue-600 transition focus:outline-none"
-          aria-label="Go back"
-        >
-          <ArrowLeft className="w-6 h-6" />
-        </button>
-
+      <div className="bg-white rounded-2xl p-8 shadow-lg max-w-md w-full space-y-6">
         <div className="flex justify-center mb-4">
           <RazorpayLogo />
         </div>
@@ -128,7 +154,7 @@ export default function Qrcode() {
             </div>
           </div>
 
-          <Timer />
+          <Timer onExpired={handlePaymentExpired} />
           <p className="text-sm text-gray-500">
             Your payment will be processed automatically.
           </p>
@@ -136,7 +162,7 @@ export default function Qrcode() {
             onClick={handleCancel}
             className="w-full bg-gray-600 text-white mt-3 font-semibold py-3 rounded-lg hover:bg-gray-700 transition"
           >
-            Cancel
+            Cancel Payment
           </button>
         </div>
 
@@ -158,14 +184,14 @@ export default function Qrcode() {
               Cancel Payment?
             </h3>
             <p className="text-gray-600 mb-4">
-              Are you sure you want to cancel this payment?
+              Are you sure you want to cancel this payment? This action cannot be undone.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowCancelConfirm(false)}
                 className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg hover:bg-gray-300 transition font-medium"
               >
-                No, Continue
+                Continue Payment
               </button>
               <button
                 onClick={confirmCancel}
