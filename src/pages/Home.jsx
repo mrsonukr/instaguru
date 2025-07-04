@@ -1,11 +1,22 @@
+import { useEffect } from "react";
 import Header from "../components/Header";
 import AutoSlider from "../components/AutoSlider";
 import ItemCard from "../components/ui/ItemCard";
 import channels from "../data/categories.json"; // Import the JSON data
 import WelcomePopup from "../components/ui/WelcomePopup"; // Import the WelcomePopup component
 import Footer from "../components/ui/Footer"; // Import the Footer component
+import { updatePageSEO, addStructuredData } from "../utils/seoUtils";
 
 const Home = () => {
+  useEffect(() => {
+    // Update SEO for home page
+    updatePageSEO('home');
+    
+    // Add structured data
+    addStructuredData('organization');
+    addStructuredData('website');
+  }, []);
+
   return (
     <>
       <Header />

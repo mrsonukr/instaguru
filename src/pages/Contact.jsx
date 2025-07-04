@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "../components/Header";
 import { Mail, Smartphone, Clock } from "lucide-react";
 import siteConfig from "../config/siteConfig";
+import { updatePageSEO } from "../utils/seoUtils";
 
 const Contact = () => {
+  useEffect(() => {
+    // Update SEO for contact page
+    updatePageSEO('contact');
+  }, []);
+
   return (
     <div>
       <Header />

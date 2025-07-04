@@ -10,6 +10,7 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import siteConfig from "../config/siteConfig";
+import { updatePageSEO } from "../utils/seoUtils";
 
 const Refer = () => {
   const { referralId } = useParams(); // Extract referral ID from URL (e.g., JW2-TLZ-0VT)
@@ -29,6 +30,9 @@ const Refer = () => {
   };
 
   useEffect(() => {
+    // Update SEO for refer page
+    updatePageSEO('refer');
+
     // Handle referral ID from URL
     if (referralId) {
       // Store referral ID in localStorage (or send to backend)

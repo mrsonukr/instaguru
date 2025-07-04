@@ -8,6 +8,7 @@ import Suggestion from "../components/ui/Suggestion";
 import WelcomePopup from "../components/ui/WelcomePopup";
 import data from "../data/categories.json";
 import Footer from "../components/ui/Footer";
+import { updatePageSEO, addStructuredData } from "../utils/seoUtils";
 
 const Products = () => {
   const { slug } = useParams();
@@ -20,6 +21,13 @@ const Products = () => {
   useEffect(() => {
     if (!selectedItem) {
       navigate("/");
+    } else {
+      // Update SEO for service page
+      updatePageSEO('service', selectedItem);
+      updatePageSEO(selectedItem.slug, selectedItem);
+      
+      // Add structured data for service
+      addStructuredData('service', selectedItem);
     }
   }, [selectedItem, navigate]);
 

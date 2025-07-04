@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { BsCheckCircleFill } from "react-icons/bs";
 import Header from "../components/Header";
 import PurchaseForm from "../components/ui/PurchaseForm";
 import servicesData from "../data/categories.json";
+import { updatePageSEO } from "../utils/seoUtils";
 
 const Purchase = () => {
   const { id } = useParams();
@@ -13,6 +14,13 @@ const Purchase = () => {
   const service = servicesData.find((s) =>
     s.packs.some((p) => p.id === parseInt(id))
   );
+
+  useEffect(() => {
+    if (pack && service) {
+      // Update SEO for purchase page
+      updatePageSEO('purchase', pack);
+    }
+  }, [pack, service]);
 
   const benefits = [
     { id: 1, message: "High-Quality Real Followers" },

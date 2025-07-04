@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "../components/Header";
 import { Users, BadgeCheck, Tv, ShieldCheck, Smile } from "lucide-react";
 import siteConfig from "../config/siteConfig";
+import { updatePageSEO } from "../utils/seoUtils";
 
 const About = () => {
+  useEffect(() => {
+    // Update SEO for about page
+    updatePageSEO('about');
+  }, []);
+
   return (
     <div>
       <Header />
