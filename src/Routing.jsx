@@ -10,9 +10,9 @@ const Purchase = lazy(() => import("./pages/Purchase"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Products = lazy(() => import("./pages/Products"));
 const AddFunds = lazy(() => import("./pages/AddFunds"));
-const Payment = lazy(() => import("./pages/Payment"));
 const Wallet = lazy(() => import("./pages/Wallet"));
 const ReferPage = lazy(() => import("./pages/Refer"));
+const Redirecting = lazy(() => import("./pages/Redirecting"));
 
 const Routing = () => {
   return (
@@ -26,10 +26,10 @@ const Routing = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/:slug" element={<Products />} />
         <Route path="/addfund" element={<AddFunds />} />
-        <Route path="/payment/:token" element={<Payment />} />
+        <Route path="/payment/:token" element={<Payme />} />
         <Route path="/wallet" element={<Wallet />} />
         <Route path="/refer/:referralId" element={<ReferPage />} />
-        <Route path="/payme" element={<Payme />} />
+        <Route path="/redirecting" element={<Redirecting />} />
       </Routes>
     </Router>
   );

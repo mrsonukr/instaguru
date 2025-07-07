@@ -17,7 +17,7 @@ const Wallet = () => {
     return sum;
   }, 0);
 
-  // Function to update transaction status from processing to failed after 10 minutes
+  // Function to update transaction status from processing to failed after 5 minutes
   const checkAndUpdateProcessingTransactions = () => {
     const paymentTransactions = JSON.parse(localStorage.getItem("paymentTransactions") || "[]");
     let hasUpdates = false;
@@ -28,7 +28,8 @@ const Wallet = () => {
         const now = new Date();
         const timeDiff = (now - processingTime) / (1000 * 60); // difference in minutes
 
-        if (timeDiff >= 10) {
+        // Change from 10 minutes to 5 minutes
+        if (timeDiff >= 5) {
           hasUpdates = true;
           return {
             ...txn,

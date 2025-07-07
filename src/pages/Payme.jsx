@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ChevronLeft } from "lucide-react";
+import { useParams, useNavigate } from "react-router-dom";
 
 const WalletOption = ({ icon, label, onClick }) => (
   <div
@@ -21,11 +22,84 @@ const SectionLabel = ({ text, icon }) => (
 );
 
 const Payme = () => {
+  const { token } = useParams();
+  const navigate = useNavigate();
+  const [amount, setAmount] = useState("1.00");
+  const [amountError, setAmountError] = useState("");
+  const [hasCreatedTransaction, setHasCreatedTransaction] = useState(false);
+  const [paymentClicked, setPaymentClicked] = useState(false);
+
+  // Original UPI details from your code
   const upi_address = "grocery334078.rzp@icici";
   const payee_name = "Grocery";
   const note = "PaymenttoGrocery";
   const mcc = "5411";
-  const amount = "1.00";
+
+  useEffect(() => {
+    if (token) {
+      try {
+        // Decode and validate token
+        const decodedToken = atob(token);
+        const tokenParts = decodedToken.split('-');
+        const [encodedAmount] = tokenParts;
+        const parsedAmount = parseInt(encodedAmount, 10);
+        
+        if (parsedAmount && parsedAmount >= 40) {
+          setAmount(parsedAmount.toString());
+        } else {
+          setAmountError("Invalid payment amount");
+          setTimeout(() => navigate("/addfund"), 2000);
+          return;
+        }
+      } catch {
+        setAmountError("Invalid payment token");
+        setTimeout(() => navigate("/addfund"), 2000);
+        return;
+      }
+
+      // Auto-redirect after 2 minutes (120 seconds) only if no payment method clicked
+      const redirectTimer = setTimeout(() => {
+        if (!paymentClicked && !hasCreatedTransaction) {
+          createProcessingTransaction();
+          setHasCreatedTransaction(true);
+          navigate("/redirecting");
+        }
+      }, 45000); 
+
+      return () => clearTimeout(redirectTimer);
+    }
+  }, [token, navigate, hasCreatedTransaction, paymentClicked]);
+
+  const createProcessingTransaction = () => {
+    if (token) {
+      const existingTransactions = JSON.parse(localStorage.getItem("paymentTransactions") || "[]");
+      const updatedTransactions = existingTransactions.map(txn => {
+        if (txn.paymentToken === token && txn.status === "initiated") {
+          return {
+            ...txn,
+            status: "processing",
+            updatedAt: new Date().toISOString(),
+            description: `Payment Processing - ₹${txn.amount}`
+          };
+        }
+        return txn;
+      });
+      localStorage.setItem("paymentTransactions", JSON.stringify(updatedTransactions));
+    }
+  };
+
+  const handleBack = () => {
+    // Back button pe koi transaction nahi hoga, direct wallet pe redirect
+    // Remove any initiated transaction for this token
+    if (token) {
+      const existingTransactions = JSON.parse(localStorage.getItem("paymentTransactions") || "[]");
+      const filteredTransactions = existingTransactions.filter(txn => 
+        !(txn.paymentToken === token && txn.status === "initiated")
+      );
+      localStorage.setItem("paymentTransactions", JSON.stringify(filteredTransactions));
+    }
+    navigate("/wallet");
+  };
 
   const payNow = (payType) => {
     const txnId = "RZPQq20UpfM9HksWcqrv2";
@@ -62,15 +136,48 @@ const Payme = () => {
         scheme = "upi";
     }
 
+    // Mark that payment method was clicked
+    setPaymentClicked(true);
+
+    // Create processing transaction when user actually tries to pay
+    if (!hasCreatedTransaction) {
+      createProcessingTransaction();
+      setHasCreatedTransaction(true);
+    }
+
     const redirect_url = `${scheme}://pay?${query}`;
+    
+    // Same page redirect - no new tab
     window.location.href = redirect_url;
+
+    // Start 1-minute countdown from when payment method is clicked
+    setTimeout(() => {
+      navigate("/redirecting");
+    }, 60000); // 1 minute
   };
+
+  if (amountError) {
+    return (
+      <div className="px-5">
+        <div className="flex items-center gap-3 py-4">
+          <div className="-ml-2 cursor-pointer" onClick={handleBack}>
+            <ChevronLeft size={32} />
+          </div>
+          <p className="text-xl font-semibold">Payment Error</p>
+        </div>
+        <div className="text-center mt-8">
+          <p className="text-red-600 font-semibold">{amountError}</p>
+          <p className="text-gray-500 mt-2">Redirecting...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="px-5">
       {/* Header */}
       <div className="flex items-center gap-3 py-4">
-        <div className="-ml-2 cursor-pointer">
+        <div className="-ml-2 cursor-pointer" onClick={handleBack}>
           <ChevronLeft size={32} />
         </div>
         <p className="text-xl font-semibold">Payment Methods</p>
@@ -82,7 +189,7 @@ const Payme = () => {
           <img src="/ic/bill.svg" alt="Add Money" />
           <p>Add Money</p>
         </div>
-        <span className="font-medium">₹5,000</span>
+        <span className="font-medium">₹{amount}</span>
       </div>
 
       {/* PAY WITH UPI */}
