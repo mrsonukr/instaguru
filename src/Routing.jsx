@@ -2,6 +2,7 @@ import { lazy } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ScrollToTop from "./components/ui/ScrollToTop";
 import Home from "./pages/Home";
+import Payme from "./pages/Payme";
 
 // Lazy load non-critical routes
 const About = lazy(() => import("./pages/About"));
@@ -28,6 +29,7 @@ const Routing = () => {
         <Route path="/payment/:token" element={<Payment />} />
         <Route path="/wallet" element={<Wallet />} />
         <Route path="/refer/:referralId" element={<ReferPage />} />
+        <Route path="/payme" element={<Payme />} />
       </Routes>
     </Router>
   );
