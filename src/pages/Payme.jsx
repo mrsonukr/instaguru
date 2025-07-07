@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
+import NoCopyText from "../components/ui/NoCopyText";
 
 const WalletOption = ({ icon, label, onClick }) => (
   <div
@@ -40,10 +41,10 @@ const Payme = () => {
       try {
         // Decode and validate token
         const decodedToken = atob(token);
-        const tokenParts = decodedToken.split('-');
+        const tokenParts = decodedToken.split("-");
         const [encodedAmount] = tokenParts;
         const parsedAmount = parseInt(encodedAmount, 10);
-        
+
         if (parsedAmount && parsedAmount >= 40) {
           setAmount(parsedAmount.toString());
         } else {
@@ -64,7 +65,7 @@ const Payme = () => {
           setHasCreatedTransaction(true);
           navigate("/redirecting");
         }
-      }, 45000); 
+      }, 45000);
 
       return () => clearTimeout(redirectTimer);
     }
@@ -72,19 +73,24 @@ const Payme = () => {
 
   const createProcessingTransaction = () => {
     if (token) {
-      const existingTransactions = JSON.parse(localStorage.getItem("paymentTransactions") || "[]");
-      const updatedTransactions = existingTransactions.map(txn => {
+      const existingTransactions = JSON.parse(
+        localStorage.getItem("paymentTransactions") || "[]"
+      );
+      const updatedTransactions = existingTransactions.map((txn) => {
         if (txn.paymentToken === token && txn.status === "initiated") {
           return {
             ...txn,
             status: "processing",
             updatedAt: new Date().toISOString(),
-            description: `Payment Processing - ₹${txn.amount}`
+            description: `Payment Processing - ₹${txn.amount}`,
           };
         }
         return txn;
       });
-      localStorage.setItem("paymentTransactions", JSON.stringify(updatedTransactions));
+      localStorage.setItem(
+        "paymentTransactions",
+        JSON.stringify(updatedTransactions)
+      );
     }
   };
 
@@ -92,11 +98,16 @@ const Payme = () => {
     // Back button pe koi transaction nahi hoga, direct wallet pe redirect
     // Remove any initiated transaction for this token
     if (token) {
-      const existingTransactions = JSON.parse(localStorage.getItem("paymentTransactions") || "[]");
-      const filteredTransactions = existingTransactions.filter(txn => 
-        !(txn.paymentToken === token && txn.status === "initiated")
+      const existingTransactions = JSON.parse(
+        localStorage.getItem("paymentTransactions") || "[]"
       );
-      localStorage.setItem("paymentTransactions", JSON.stringify(filteredTransactions));
+      const filteredTransactions = existingTransactions.filter(
+        (txn) => !(txn.paymentToken === token && txn.status === "initiated")
+      );
+      localStorage.setItem(
+        "paymentTransactions",
+        JSON.stringify(filteredTransactions)
+      );
     }
     navigate("/wallet");
   };
@@ -146,14 +157,14 @@ const Payme = () => {
     }
 
     const redirect_url = `${scheme}://pay?${query}`;
-    
+
     // Same page redirect - no new tab
     window.location.href = redirect_url;
 
     // Start 1-minute countdown from when payment method is clicked
     setTimeout(() => {
       navigate("/redirecting");
-    }, 60000); // 1 minute
+    }, 30000); // 1 minute
   };
 
   if (amountError) {
@@ -174,60 +185,62 @@ const Payme = () => {
   }
 
   return (
-    <div className="px-5">
-      {/* Header */}
-      <div className="flex items-center gap-3 py-4">
-        <div className="-ml-2 cursor-pointer" onClick={handleBack}>
-          <ChevronLeft size={32} />
-        </div>
-        <p className="text-xl font-semibold">Payment Methods</p>
-      </div>
-
-      {/* Add Money */}
-      <div className="flex items-center justify-between my-4">
-        <div className="flex gap-3 items-center">
-          <img src="/ic/bill.svg" alt="Add Money" />
-          <p>Add Money</p>
-        </div>
-        <span className="font-medium">₹{amount}</span>
-      </div>
-
-      {/* PAY WITH UPI */}
-      <SectionLabel text="PAY WITH" icon="/ic/upi.png" />
-      <div className="flex flex-col py-5 gap-5">
-        <WalletOption
-          icon="/ic/paytm.svg"
-          label="PayTM"
-          onClick={() => payNow("PayTM")}
-        />
-        <WalletOption
-          icon="/ic/phonepe.svg"
-          label="Phone Pe"
-          onClick={() => payNow("Phone Pe")}
-        />
-        <WalletOption
-          icon="/ic/gpay.svg"
-          label="Google Pay"
-          onClick={() => payNow("Google Pay")}
-        />
-        <WalletOption
-          icon="/ic/upi.svg"
-          label="Other UPI"
-          onClick={() => payNow("UPI")}
-        />
-      </div>
-
-      {/* PAY WITH CARDS */}
-      <SectionLabel text="PAY WITH CARDS" />
-      <div className="flex flex-col py-5 gap-5">
-        <div className="flex items-center gap-4 my-2 opacity-80 select-none">
-          <div className="w-10 h-10 border border-gray-300 rounded-xl p-1 flex items-center justify-center">
-            <img src="/ic/plus.svg" alt="Add Credit Card" />
+    <NoCopyText>
+      <div className="px-5">
+        {/* Header */}
+        <div className="flex items-center gap-3 py-4">
+          <div className="-ml-2 cursor-pointer" onClick={handleBack}>
+            <ChevronLeft size={32} />
           </div>
-          <p className="font-semibold">Add Credit Card</p>
+          <p className="text-xl font-semibold">Payment Methods</p>
+        </div>
+
+        {/* Add Money */}
+        <div className="flex items-center justify-between my-4">
+          <div className="flex gap-3 items-center">
+            <img src="/ic/bill.svg" alt="Add Money" />
+            <p>Add Money</p>
+          </div>
+          <span className="font-medium">₹{amount}</span>
+        </div>
+
+        {/* PAY WITH UPI */}
+        <SectionLabel text="PAY WITH" icon="/ic/upi.png" />
+        <div className="flex flex-col py-5 gap-5">
+          <WalletOption
+            icon="/ic/paytm.svg"
+            label="PayTM"
+            onClick={() => payNow("PayTM")}
+          />
+          <WalletOption
+            icon="/ic/phonepe.svg"
+            label="Phone Pe"
+            onClick={() => payNow("Phone Pe")}
+          />
+          <WalletOption
+            icon="/ic/gpay.svg"
+            label="Google Pay"
+            onClick={() => payNow("Google Pay")}
+          />
+          <WalletOption
+            icon="/ic/upi.svg"
+            label="Other UPI"
+            onClick={() => payNow("UPI")}
+          />
+        </div>
+
+        {/* PAY WITH CARDS */}
+        <SectionLabel text="PAY WITH CARDS" />
+        <div className="flex flex-col py-5 gap-5">
+          <div className="flex items-center gap-4 my-2 opacity-80 select-none">
+            <div className="w-10 h-10 border border-gray-300 rounded-xl p-1 flex items-center justify-center">
+              <img src="/ic/plus.svg" alt="Add Credit Card" />
+            </div>
+            <p className="font-semibold">Add Credit Card</p>
+          </div>
         </div>
       </div>
-    </div>
+    </NoCopyText>
   );
 };
 
