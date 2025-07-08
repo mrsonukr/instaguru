@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
+import { ThreeDot } from "react-loading-indicators";
 import Skeleton from "../ui/Skeleton";
 
 const PaymentPopup = ({ 
@@ -111,14 +112,18 @@ const PaymentPopup = ({
                 </>
               ) : (
                 <div className="py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                  <div className="flex justify-center mb-4">
+                    <ThreeDot color="#3b7aff" size="medium" text="" textColor="" />
+                  </div>
                   <p className="text-gray-600">Generating QR Code...</p>
                 </div>
               )}
             </div>
           ) : (
             <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+              <div className="flex justify-center mb-4">
+                <ThreeDot color="#3b7aff" size="large" text="" textColor="" />
+              </div>
               <h4 className="text-lg font-semibold mb-2">Processing Payment</h4>
               <p className="text-gray-600 mb-4">
                 Redirecting to {selectedPaymentMethod === "paytm" ? "PayTM" : 

@@ -52,7 +52,7 @@ const Payme = () => {
     let timer;
     if (showPopup && selectedPaymentMethod === "qrcode" && timeLeft > 0) {
       timer = setInterval(() => {
-        setTimeLeft(prev => {
+        setTimeLeft((prev) => {
           if (prev <= 1) {
             // Time expired, close popup
             closePopup();
@@ -89,19 +89,19 @@ const Payme = () => {
   const generateQRCode = async () => {
     const txnId = "RZPQq20UpfM9HksWcqrv2";
     const paymentLink = `upi://pay?pa=${upi_address}&pn=${payee_name}&tr=${txnId}&cu=INR&mc=${mcc}&tn=${note}&am=${amount}`;
-    
+
     try {
       const qrDataUrl = await QRCode.toDataURL(paymentLink, {
         width: 200,
         margin: 2,
         color: {
-          dark: '#000000',
-          light: '#FFFFFF'
-        }
+          dark: "#000000",
+          light: "#FFFFFF",
+        },
       });
       setQrCodeDataUrl(qrDataUrl);
     } catch (error) {
-      console.error('Error generating QR code:', error);
+      console.error("Error generating QR code:", error);
     }
   };
 
@@ -187,7 +187,7 @@ const Payme = () => {
 
   return (
     <NoCopyText>
-      <div className="px-5 min-h-screen flex flex-col">
+      <div className="px-5 flex flex-col">
         {/* Header */}
         <PaymentHeader onBack={handleBack} />
 
@@ -201,7 +201,7 @@ const Payme = () => {
         </div>
 
         {/* Payment Methods */}
-        <PaymentMethods 
+        <PaymentMethods
           selectedPaymentMethod={selectedPaymentMethod}
           onMethodSelect={setSelectedPaymentMethod}
         />
@@ -213,8 +213,8 @@ const Payme = () => {
             disabled={!selectedPaymentMethod}
             className={`w-full py-3 rounded-lg font-semibold text-white transition-colors ${
               selectedPaymentMethod
-                ? 'bg-black hover:bg-gray-800'
-                : 'bg-gray-700 cursor-not-allowed'
+                ? "bg-black hover:bg-gray-800"
+                : "bg-gray-700 cursor-not-allowed"
             }`}
           >
             Continue

@@ -36,14 +36,9 @@ const PaymentMethods = ({ selectedPaymentMethod, onMethodSelect }) => {
           selectedMethod={selectedPaymentMethod}
           onSelect={onMethodSelect}
         />
-      </div>
-
-      {/* SCAN QR TO PAY */}
-      <SectionLabel text="SCAN QR TO PAY" />
-      <div className="flex flex-col py-5 gap-2">
         <WalletOption
           icon="/ic/qr-code.svg"
-          label="Generate QR Code"
+          label="Scan QR Code"
           value="qrcode"
           selectedMethod={selectedPaymentMethod}
           onSelect={onMethodSelect}
