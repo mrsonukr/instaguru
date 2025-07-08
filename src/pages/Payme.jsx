@@ -164,6 +164,11 @@ const Payme = () => {
   };
 
   const closePopup = () => {
+    // Clear browser console when closing popup
+    if (typeof console !== 'undefined' && console.clear) {
+      console.clear();
+    }
+    
     setIsClosing(true);
     setTimeout(() => {
       setShowPopup(false);

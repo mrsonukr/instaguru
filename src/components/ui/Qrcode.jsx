@@ -14,7 +14,15 @@ export default function Qrcode() {
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const [paymentExpired, setPaymentExpired] = useState(false);
+  const [txnId, setTxnId] = useState(""); // Add state for transaction ID
   const navigate = useNavigate();
+
+  // Function to generate unique transaction ID
+  const generateTxnId = () => {
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(2, 8);
+    return `RZP${timestamp}${random}`;
+  };
 
   const updatePaymentStatus = (status) => {
     const existingTransactions = JSON.parse(localStorage.getItem("paymentTransactions") || "[]");
@@ -46,6 +54,8 @@ export default function Qrcode() {
       
       if (parsedAmount && parsedAmount >= siteConfig.minimumAmount) {
         setAmount(parsedAmount.toString());
+        // Generate unique transaction ID when component loads
+        setTxnId(generateTxnId());
         
         // Get UPI ID from token or fallback to random selection
         if (upiIndex !== undefined && siteConfig.upiIds[parseInt(upiIndex)]) {
@@ -98,7 +108,7 @@ export default function Qrcode() {
     }, 1000);
   };
 
-  if (amountError || !amount || !selectedUpiId) {
+  if (amountError || !amount || !selectedUpiId || !txnId) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl p-8 shadow-lg max-w-md w-full space-y-6">
@@ -119,7 +129,7 @@ export default function Qrcode() {
     );
   }
 
-  const paymentLink = `upi://pay?pa=${selectedUpiId}&pn=${siteConfig.siteName}&am=${amount}&cu=INR&tn=ORD4575224455`;
+  const paymentLink = `upi://pay?pa=${selectedUpiId}&pn=${siteConfig.siteName}&am=${amount}&cu=INR&tn=${txnId}`;
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">

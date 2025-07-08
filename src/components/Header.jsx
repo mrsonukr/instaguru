@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import { FiMenu, FiHome, FiCreditCard, FiPhone, FiInfo, FiShare2 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import siteConfig from "../config/siteConfig";
+import { clearConsole } from "../utils/consoleUtils";
 
 const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
+    // Clear console when opening/closing sidebar
+    clearConsole();
     setIsSidebarOpen(!isSidebarOpen);
   };
 
