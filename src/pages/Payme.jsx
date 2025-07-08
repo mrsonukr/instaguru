@@ -1,34 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { ChevronLeft } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
+import QRCode from "qrcode";
 import NoCopyText from "../components/ui/NoCopyText";
-
-const WalletOption = ({ icon, label, onClick }) => (
-  <div
-    onClick={onClick}
-    className="flex items-center gap-4 my-2 cursor-pointer"
-  >
-    <div className="w-10 h-10 border border-gray-300 rounded-xl p-1 flex items-center justify-center">
-      <img src={icon} alt={label} />
-    </div>
-    <p className="font-semibold opacity-80">{label}</p>
-  </div>
-);
-
-const SectionLabel = ({ text, icon }) => (
-  <div className="bg-gray-100 flex gap-2 text-gray-500 font-semibold text-xs -mx-5 px-5 py-2 items-center">
-    <span>{text}</span>
-    {icon && <img className="w-8" src={icon} alt={text} />}
-  </div>
-);
+import PaymentHeader from "../components/payment/PaymentHeader";
+import PaymentMethods from "../components/payment/PaymentMethods";
+import PaymentPopup from "../components/payment/PaymentPopup";
 
 const Payme = () => {
   const { token } = useParams();
   const navigate = useNavigate();
   const [amount, setAmount] = useState("1.00");
   const [amountError, setAmountError] = useState("");
-  const [hasCreatedTransaction, setHasCreatedTransaction] = useState(false);
-  const [paymentClicked, setPaymentClicked] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+  const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
+  const [timeLeft, setTimeLeft] = useState(180); // 3 minutes = 180 seconds
 
   // Original UPI details from your code
   const upi_address = "grocery334078.rzp@icici";
@@ -57,42 +44,29 @@ const Payme = () => {
         setTimeout(() => navigate("/addfund"), 2000);
         return;
       }
-
-      // Auto-redirect after 2 minutes (120 seconds) only if no payment method clicked
-      const redirectTimer = setTimeout(() => {
-        if (!paymentClicked && !hasCreatedTransaction) {
-          createProcessingTransaction();
-          setHasCreatedTransaction(true);
-          navigate("/redirecting");
-        }
-      }, 45000);
-
-      return () => clearTimeout(redirectTimer);
     }
-  }, [token, navigate, hasCreatedTransaction, paymentClicked]);
+  }, [token, navigate]);
 
-  const createProcessingTransaction = () => {
-    if (token) {
-      const existingTransactions = JSON.parse(
-        localStorage.getItem("paymentTransactions") || "[]"
-      );
-      const updatedTransactions = existingTransactions.map((txn) => {
-        if (txn.paymentToken === token && txn.status === "initiated") {
-          return {
-            ...txn,
-            status: "processing",
-            updatedAt: new Date().toISOString(),
-            description: `Payment Processing - ₹${txn.amount}`,
-          };
-        }
-        return txn;
-      });
-      localStorage.setItem(
-        "paymentTransactions",
-        JSON.stringify(updatedTransactions)
-      );
+  // Timer effect for QR code
+  useEffect(() => {
+    let timer;
+    if (showPopup && selectedPaymentMethod === "qrcode" && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft(prev => {
+          if (prev <= 1) {
+            // Time expired, close popup
+            closePopup();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
     }
-  };
+
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [showPopup, selectedPaymentMethod, timeLeft]);
 
   const handleBack = () => {
     // Back button pe koi transaction nahi hoga, direct wallet pe redirect
@@ -112,7 +86,43 @@ const Payme = () => {
     navigate("/wallet");
   };
 
-  const payNow = (payType) => {
+  const generateQRCode = async () => {
+    const txnId = "RZPQq20UpfM9HksWcqrv2";
+    const paymentLink = `upi://pay?pa=${upi_address}&pn=${payee_name}&tr=${txnId}&cu=INR&mc=${mcc}&tn=${note}&am=${amount}`;
+    
+    try {
+      const qrDataUrl = await QRCode.toDataURL(paymentLink, {
+        width: 200,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF'
+        }
+      });
+      setQrCodeDataUrl(qrDataUrl);
+    } catch (error) {
+      console.error('Error generating QR code:', error);
+    }
+  };
+
+  const handleContinue = async () => {
+    if (!selectedPaymentMethod) {
+      alert("Please select a payment method");
+      return;
+    }
+
+    // Show popup for all payment methods
+    setShowPopup(true);
+    setIsClosing(false);
+    setTimeLeft(180); // Reset timer to 3 minutes
+
+    // If QR Code is selected, generate QR code
+    if (selectedPaymentMethod === "qrcode") {
+      await generateQRCode();
+      return;
+    }
+
+    // For other payment methods, redirect to app after showing popup
     const txnId = "RZPQq20UpfM9HksWcqrv2";
 
     const params = {
@@ -131,15 +141,13 @@ const Payme = () => {
     const query = new URLSearchParams(params).toString();
 
     let scheme = "upi";
-    switch (payType.toLowerCase()) {
+    switch (selectedPaymentMethod.toLowerCase()) {
       case "paytm":
         scheme = "paytmmp";
         break;
-      case "phone pe":
       case "phonepe":
         scheme = "phonepe";
         break;
-      case "google pay":
       case "gpay":
         scheme = "tez";
         break;
@@ -147,35 +155,28 @@ const Payme = () => {
         scheme = "upi";
     }
 
-    // Mark that payment method was clicked
-    setPaymentClicked(true);
-
-    // Create processing transaction when user actually tries to pay
-    if (!hasCreatedTransaction) {
-      createProcessingTransaction();
-      setHasCreatedTransaction(true);
-    }
-
     const redirect_url = `${scheme}://pay?${query}`;
 
-    // Same page redirect - no new tab
-    window.location.href = redirect_url;
-
-    // Start 1-minute countdown from when payment method is clicked
+    // Wait a bit then redirect to app
     setTimeout(() => {
-      navigate("/redirecting");
-    }, 30000); // 1 minute
+      window.location.href = redirect_url;
+    }, 1000);
+  };
+
+  const closePopup = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setShowPopup(false);
+      setIsClosing(false);
+      setQrCodeDataUrl("");
+      setTimeLeft(180); // Reset timer
+    }, 300); // Wait for animation to complete
   };
 
   if (amountError) {
     return (
       <div className="px-5">
-        <div className="flex items-center gap-3 py-4">
-          <div className="-ml-2 cursor-pointer" onClick={handleBack}>
-            <ChevronLeft size={32} />
-          </div>
-          <p className="text-xl font-semibold">Payment Error</p>
-        </div>
+        <PaymentHeader onBack={handleBack} />
         <div className="text-center mt-8">
           <p className="text-red-600 font-semibold">{amountError}</p>
           <p className="text-gray-500 mt-2">Redirecting...</p>
@@ -186,14 +187,9 @@ const Payme = () => {
 
   return (
     <NoCopyText>
-      <div className="px-5">
+      <div className="px-5 min-h-screen flex flex-col">
         {/* Header */}
-        <div className="flex items-center gap-3 py-4">
-          <div className="-ml-2 cursor-pointer" onClick={handleBack}>
-            <ChevronLeft size={32} />
-          </div>
-          <p className="text-xl font-semibold">Payment Methods</p>
-        </div>
+        <PaymentHeader onBack={handleBack} />
 
         {/* Add Money */}
         <div className="flex items-center justify-between my-4">
@@ -204,41 +200,37 @@ const Payme = () => {
           <span className="font-medium">₹{amount}</span>
         </div>
 
-        {/* PAY WITH UPI */}
-        <SectionLabel text="PAY WITH" icon="/ic/upi.png" />
-        <div className="flex flex-col py-5 gap-5">
-          <WalletOption
-            icon="/ic/paytm.svg"
-            label="PayTM"
-            onClick={() => payNow("PayTM")}
-          />
-          <WalletOption
-            icon="/ic/phonepe.svg"
-            label="Phone Pe"
-            onClick={() => payNow("Phone Pe")}
-          />
-          <WalletOption
-            icon="/ic/gpay.svg"
-            label="Google Pay"
-            onClick={() => payNow("Google Pay")}
-          />
-          <WalletOption
-            icon="/ic/upi.svg"
-            label="Other UPI"
-            onClick={() => payNow("UPI")}
-          />
+        {/* Payment Methods */}
+        <PaymentMethods 
+          selectedPaymentMethod={selectedPaymentMethod}
+          onMethodSelect={setSelectedPaymentMethod}
+        />
+
+        {/* Continue Button - Fixed at bottom */}
+        <div className="mt-auto pb-6">
+          <button
+            onClick={handleContinue}
+            disabled={!selectedPaymentMethod}
+            className={`w-full py-3 rounded-lg font-semibold text-white transition-colors ${
+              selectedPaymentMethod
+                ? 'bg-black hover:bg-gray-800'
+                : 'bg-gray-700 cursor-not-allowed'
+            }`}
+          >
+            Continue
+          </button>
         </div>
 
-        {/* PAY WITH CARDS */}
-        <SectionLabel text="PAY WITH CARDS" />
-        <div className="flex flex-col py-5 gap-5">
-          <div className="flex items-center gap-4 my-2 opacity-80 select-none">
-            <div className="w-10 h-10 border border-gray-300 rounded-xl p-1 flex items-center justify-center">
-              <img src="/ic/plus.svg" alt="Add Credit Card" />
-            </div>
-            <p className="font-semibold">Add Credit Card</p>
-          </div>
-        </div>
+        {/* Payment Popup */}
+        <PaymentPopup
+          showPopup={showPopup}
+          isClosing={isClosing}
+          selectedPaymentMethod={selectedPaymentMethod}
+          qrCodeDataUrl={qrCodeDataUrl}
+          timeLeft={timeLeft}
+          amount={amount}
+          onClose={closePopup}
+        />
       </div>
     </NoCopyText>
   );
