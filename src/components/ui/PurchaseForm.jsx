@@ -34,23 +34,10 @@ const PurchaseForm = ({
     placeholder: config.placeholder,
   };
 
-  const validateInput = (value) => {
-    // Check if it's a valid email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (emailRegex.test(value)) return true;
-    
-    // Check if it's a valid URL
-    try {
-      new URL(value);
-      return true;
-    } catch {
-      return false;
-    }
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (input && validateInput(input)) {
+    if (input.trim()) {
       const hasSufficientBalance = false; // Replace with actual balance check logic
       if (!hasSufficientBalance) {
         setShowPopup(true);
