@@ -17,6 +17,15 @@ const siteConfig = {
     "instaguru@slice", 
     "akbar3815@amazonpay",
   ],
+  
+  // QR Code Payment Configuration
+  qrPaymentConfig: {
+    upi_address: "akbar3815@amazonpay",
+    payee_name: "Grocery",
+    note: "PaymenttoGrocery",
+    mcc: "5411"
+  },
+  
   minimumAmount: 40,
   maximumAmount: 2500,
   
