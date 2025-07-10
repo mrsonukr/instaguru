@@ -7,6 +7,7 @@ const PurchaseForm = ({
   serviceData = {},
   filter = "Followers",
   onSubmit,
+  packPrice = 0,
 }) => {
   const variant = COLOR_VARIANTS[color] || COLOR_VARIANTS.red;
   const [input, setInput] = useState("");
@@ -84,7 +85,7 @@ const PurchaseForm = ({
           Continue
         </button>
       </form>
-      <Popup isVisible={showPopup} onClose={handleClosePopup} />
+      <Popup isVisible={showPopup} onClose={handleClosePopup} requiredAmount={packPrice} />
     </>
   );
 };

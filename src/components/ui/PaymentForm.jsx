@@ -5,7 +5,15 @@ import { Loader2 } from "lucide-react";
 import siteConfig from "../../config/siteConfig";
 
 export default function PaymentForm() {
-  const [amount, setAmount] = useState(siteConfig.minimumAmount.toString());
+  const [amount, setAmount] = useState(() => {
+    // Check if there's a prefilled amount from service selection
+    const prefilledAmount = localStorage.getItem("prefilledAmount");
+    if (prefilledAmount) {
+      localStorage.removeItem("prefilledAmount"); // Clear it after using
+      return prefilledAmount;
+    }
+    return siteConfig.minimumAmount.toString();
+  });
   const [errors, setErrors] = useState({ amount: "" });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -88,8 +96,10 @@ export default function PaymentForm() {
   // Calculate bonus amount - 40% for 100, 200, 500
   const getBonus = (amt) => {
     const parsedAmt = parseInt(amt, 10);
-    if (parsedAmt === 100 || parsedAmt === 200 || parsedAmt === 500) {
-      return Math.floor(parsedAmt * 0.40); // 40% bonus
+    if (parsedAmt >= 100 && parsedAmt < 250) {
+      return 40; // Fixed 40rs bonus for 100+
+    } else if (parsedAmt >= 250) {
+      return 110; // Fixed 110rs bonus for 250+
     }
     return 0;
   };
@@ -125,7 +135,7 @@ export default function PaymentForm() {
           {currentBonus > 0 && (
             <div className="mt-2 p-3 bg-green-100 border border-green-300 rounded-lg">
               <p className="text-sm font-semibold text-green-700">
-                🎁 Add ₹{amount} → Get ₹{currentBonus} Extra (40% Bonus)
+                🎁 Add ₹{amount} → Get ₹{currentBonus} Extra Bonus
               </p>
             </div>
           )}
@@ -148,32 +158,22 @@ export default function PaymentForm() {
         {/* Special Offer Buttons */}
         <div className="space-y-2">
           <p className="text-center text-sm font-semibold text-gray-700">🔥 Special Offers</p>
-          <div className="flex justify-center gap-2">
+          <div className="flex justify-center gap-4">
             <button
               type="button"
               onClick={() => handleSuggestedAmount(100)}
-              className="px-3 py-2 bg-yellow-100 text-yellow-700 text-xs font-semibold rounded-lg hover:bg-yellow-200 transition disabled:opacity-50"
+              className="px-4 py-2 bg-yellow-100 text-yellow-700 text-sm font-semibold rounded-lg hover:bg-yellow-200 transition disabled:opacity-50"
               disabled={isLoading}
             >
-              Add ₹100 → Get ₹40 Extra (40% Bonus)
+              Add ₹100+ → Get ₹40 Extra
             </button>
             <button
               type="button"
-              onClick={() => handleSuggestedAmount(200)}
-              className="px-3 py-2 bg-yellow-100 text-yellow-700 text-xs font-semibold rounded-lg hover:bg-yellow-200 transition disabled:opacity-50"
+              onClick={() => handleSuggestedAmount(250)}
+              className="px-4 py-2 bg-yellow-100 text-yellow-700 text-sm font-semibold rounded-lg hover:bg-yellow-200 transition disabled:opacity-50"
               disabled={isLoading}
             >
-              Add ₹200 → Get ₹80 Extra (40% Bonus)
-            </button>
-          </div>
-          <div className="flex justify-center">
-            <button
-              type="button"
-              onClick={() => handleSuggestedAmount(500)}
-              className="px-3 py-2 bg-yellow-100 text-yellow-700 text-xs font-semibold rounded-lg hover:bg-yellow-200 transition disabled:opacity-50"
-              disabled={isLoading}
-            >
-              Add ₹500 → Get ₹200 Extra (40% Bonus)
+              Add ₹250+ → Get ₹110 Extra
             </button>
           </div>
         </div>

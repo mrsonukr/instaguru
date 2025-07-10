@@ -50,6 +50,7 @@ const Purchase = () => {
           serviceData={service}
           color={service.color}
           filter={pack.filter}
+          packPrice={pack.price}
           onSubmit={(link) => console.log("Submitted:", link)}
         />
       </div>

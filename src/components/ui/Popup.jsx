@@ -1,8 +1,23 @@
 import { X, AlertTriangle, CreditCard } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import siteConfig from "../../config/siteConfig";
 
-const Popup = ({ isVisible, onClose }) => {
+const Popup = ({ isVisible, onClose, requiredAmount = 0 }) => {
+  const navigate = useNavigate();
+  
+  const handleAddFunds = () => {
+    // Calculate amount needed (required amount minus current balance)
+    const currentBalance = siteConfig.welcomeBonus;
+    const amountNeeded = Math.max(requiredAmount - currentBalance, siteConfig.minimumAmount);
+    
+    // Store the amount needed in localStorage for the payment form
+    localStorage.setItem("prefilledAmount", amountNeeded.toString());
+    
+    // Navigate to add fund page
+    navigate("/addfund");
+    onClose();
+  };
+
   return (
     <>
       {isVisible && (
@@ -28,12 +43,12 @@ const Popup = ({ isVisible, onClose }) => {
             <p className="text-sm mt-2 text-center text-gray-400">
               आपके पास पर्याप्त शेष नहीं है। कृपया पहले फंड जोड़ें।
             </p>
-            <Link
-              to="/addfund"
+            <button
+              onClick={handleAddFunds}
               className="mt-4 text-white bg-green-500 hover:bg-green-600 py-2 px-4 rounded-lg mx-auto block text-center"
             >
               <CreditCard className="inline mr-2" /> Add Funds / फंड जोड़ें
-            </Link>
+            </button>
             <Link to="/refer" className="text-center">
               <p className="text-green-600 mt-3 text-sm font-semibold">
                 🤑 Refer & Earn! Click Here
