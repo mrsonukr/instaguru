@@ -8,8 +8,8 @@ const siteConfig = {
   
   // Contact Information
   supportEmail: "help@instaguru.shop",
-  supportPhone: "+91 74930 28113",
-  whatsappNumber: "917493028113",
+  supportPhone: "+91 82102 20189",
+  whatsappNumber: "918210220189",
   
   // Payment Configuration - Multiple UPI IDs
   upiIds: [
