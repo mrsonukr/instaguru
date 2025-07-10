@@ -88,7 +88,7 @@ const Payme = () => {
 
   const generateQRCode = async () => {
     const txnId = "RZPQq20UpfM9HksWcqrv2";
-    const paymentLink = `upi://pay?pa=${upi_address}&pn=${payee_name}&tr=${txnId}&cu=INR&mc=${mcc}&tn=${note}&am=${amount}`;
+    const paymentLink = `upi://pay?pa=akbar3815@amazonpay&pn=${payee_name}&tr=${txnId}&cu=INR&mc=${mcc}&tn=${note}&am=${amount}`;
 
     try {
       const qrDataUrl = await QRCode.toDataURL(paymentLink, {
