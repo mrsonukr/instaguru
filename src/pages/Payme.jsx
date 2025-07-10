@@ -5,7 +5,6 @@ import NoCopyText from "../components/ui/NoCopyText";
 import PaymentHeader from "../components/payment/PaymentHeader";
 import PaymentMethods from "../components/payment/PaymentMethods";
 import PaymentPopup from "../components/payment/PaymentPopup";
-import siteConfig from "../config/siteConfig";
 
 const Payme = () => {
   const { token } = useParams();
@@ -18,8 +17,11 @@ const Payme = () => {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
   const [timeLeft, setTimeLeft] = useState(180); // 3 minutes = 180 seconds
 
-  // Get UPI details from config
-  const { upi_address, payee_name, note, mcc } = siteConfig.qrPaymentConfig;
+  // Original UPI details from your code
+  const upi_address = "grocery334078.rzp@icici";
+  const payee_name = "Grocery";
+  const note = "PaymenttoGrocery";
+  const mcc = "5411";
 
   useEffect(() => {
     if (token) {
