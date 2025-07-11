@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FiMenu, FiHome, FiCreditCard, FiPhone, FiInfo, FiShare2 } from "react-icons/fi";
+import { FiMenu, FiHome, FiCreditCard, FiPhone, FiInfo, FiShare2, FiPackage } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import siteConfig from "../config/siteConfig";
 import { clearConsole } from "../utils/consoleUtils";
@@ -70,6 +70,15 @@ const Header = () => {
             >
               <FiCreditCard className="w-6 h-6 text-green-500" />
               Wallet: ₹ {siteConfig.welcomeBonus}.00
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/orders"
+              className="flex items-center p-4 border-b border-gray-200 hover:bg-green-50 transition-colors duration-200 gap-3 text-gray-800 font-medium no-underline"
+            >
+              <FiPackage className="w-6 h-6 text-green-500" />
+              My Orders
             </Link>
           </li>
           <li>

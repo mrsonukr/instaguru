@@ -4,6 +4,9 @@ import Skeleton from "../ui/Skeleton";
 const WalletOption = ({ icon, label, value, selectedMethod, onSelect }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  
+  // Check if icon is a React component (SVG) or image URL
+  const isImageIcon = typeof icon === 'string';
 
   const handleImageLoad = () => {
     setImageLoaded(true);
@@ -23,13 +26,13 @@ const WalletOption = ({ icon, label, value, selectedMethod, onSelect }) => {
     >
       <div className="flex items-center gap-4">
         <div className="w-10 h-10 border border-gray-300 rounded-xl p-1 flex items-center justify-center relative">
-          {/* Loading spinner */}
-          {!imageLoaded && !imageError && (
+          {/* Loading spinner - only for image icons */}
+          {isImageIcon && !imageLoaded && !imageError && (
             <Skeleton className="absolute inset-0 rounded-xl" />
           )}
           
           {/* Image or SVG icon */}
-          {typeof icon === 'string' ? (
+          {isImageIcon ? (
             <img 
               src={icon} 
               alt={label}
@@ -48,13 +51,15 @@ const WalletOption = ({ icon, label, value, selectedMethod, onSelect }) => {
           )}
           
           {/* Error fallback */}
-          {imageError && typeof icon === 'string' && (
+          {imageError && isImageIcon && (
             <div className="w-6 h-6 bg-gray-200 rounded flex items-center justify-center">
               <span className="text-xs text-gray-500">?</span>
             </div>
           )}
         </div>
-        <p className="font-semibold opacity-80">{label}</p>
+        <div className="font-semibold opacity-80">
+          {typeof label === 'string' ? label : label}
+        </div>
       </div>
       <div className="flex items-center">
         <input

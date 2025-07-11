@@ -11,11 +11,12 @@ const Payme = () => {
   const navigate = useNavigate();
   const [amount, setAmount] = useState("1.00");
   const [amountError, setAmountError] = useState("");
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("phonepe");
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("upi");
   const [showPopup, setShowPopup] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
   const [timeLeft, setTimeLeft] = useState(180); // 3 minutes = 180 seconds
+  const [displayAmount, setDisplayAmount] = useState(amount);
 
   // Original UPI details from your code
   const upi_address = "grocery334078.rzp@icici";
@@ -68,6 +69,15 @@ const Payme = () => {
     };
   }, [showPopup, selectedPaymentMethod, timeLeft]);
 
+  // Update display amount when payment method changes
+  useEffect(() => {
+    if (selectedPaymentMethod === "qrcode") {
+      setDisplayAmount((parseFloat(amount) - 2).toString());
+    } else {
+      setDisplayAmount(amount);
+    }
+  }, [selectedPaymentMethod, amount]);
+
   const handleBack = () => {
     // Back button pe koi transaction nahi hoga, direct wallet pe redirect
     // Remove any initiated transaction for this token
@@ -88,7 +98,7 @@ const Payme = () => {
 
   const generateQRCode = async () => {
     const txnId = "RZPQq20UpfM9HksWcqrv2";
-    const paymentLink = `upi://pay?pa=akbar3815@amazonpay&pn=${payee_name}&tr=${txnId}&cu=INR&mc=${mcc}&tn=${note}&am=${amount}`;
+    const paymentLink = `upi://pay?pa=akbar3815@amazonpay&pn=${payee_name}&tr=${txnId}&cu=INR&mc=${mcc}&tn=${note}&am=${displayAmount}`;
 
     try {
       const qrDataUrl = await QRCode.toDataURL(paymentLink, {
@@ -135,7 +145,7 @@ const Payme = () => {
       mc: mcc,
       qrMedium: "04",
       tn: note,
-      am: amount,
+      am: displayAmount,
     };
 
     const query = new URLSearchParams(params).toString();
@@ -201,14 +211,25 @@ const Payme = () => {
           <div className="flex gap-3 items-center">
             <img src="/ic/bill.svg" alt="Add Money" />
             <p>Add Money</p>
+            {selectedPaymentMethod === "qrcode" && (
+              <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-semibold">
+                ₹2 OFF
+              </span>
+            )}
           </div>
-          <span className="font-medium">₹{amount}</span>
+          <div className="flex items-center gap-2">
+            {selectedPaymentMethod === "qrcode" && parseFloat(amount) > 2 && (
+              <span className="text-sm text-gray-500 line-through">₹{amount}</span>
+            )}
+            <span className="font-medium">₹{displayAmount}</span>
+          </div>
         </div>
 
         {/* Payment Methods */}
         <PaymentMethods
           selectedPaymentMethod={selectedPaymentMethod}
           onMethodSelect={setSelectedPaymentMethod}
+          showQrDiscount={parseFloat(amount) > 2}
         />
 
         {/* Continue Button - Fixed at bottom */}
@@ -233,7 +254,7 @@ const Payme = () => {
           selectedPaymentMethod={selectedPaymentMethod}
           qrCodeDataUrl={qrCodeDataUrl}
           timeLeft={timeLeft}
-          amount={amount}
+          amount={displayAmount}
           onClose={closePopup}
         />
       </div>

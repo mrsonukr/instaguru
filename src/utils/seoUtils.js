@@ -119,6 +119,11 @@ const seoData = {
     title: `Refer & Earn ₹${siteConfig.referralBonus} - ${siteConfig.siteName}`,
     description: `Refer friends to ${siteConfig.siteName} and earn ₹${siteConfig.referralBonus} for each successful referral. Share your link and start earning rewards today!`,
     keywords: `refer and earn, referral program, earn money, social media marketing referral`
+  },
+  orders: {
+    title: `My Orders - ${siteConfig.siteName}`,
+    description: `Track your social media marketing orders. View order status, delivery progress and manage your purchases from ${siteConfig.siteName}.`,
+    keywords: `my orders, order tracking, social media orders, order history, order status`
   }
 };
 

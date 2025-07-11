@@ -2,7 +2,7 @@ import React from "react";
 import WalletOption from "./WalletOption";
 import SectionLabel from "./SectionLabel";
 
-const PaymentMethods = ({ selectedPaymentMethod, onMethodSelect }) => {
+const PaymentMethods = ({ selectedPaymentMethod, onMethodSelect, showQrDiscount = false }) => {
   return (
     <>
       {/* PAY WITH UPI */}
@@ -37,8 +37,17 @@ const PaymentMethods = ({ selectedPaymentMethod, onMethodSelect }) => {
           onSelect={onMethodSelect}
         />
         <WalletOption
-          icon="/ic/qr-code.svg"
-          label="Scan QR Code"
+          icon={<QRCodeIcon />}
+          label={
+            <div className="flex items-center gap-2">
+              <span>Scan QR Code</span>
+              {showQrDiscount && (
+                <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-semibold">
+                  ₹2 OFF
+                </span>
+              )}
+            </div>
+          }
           value="qrcode"
           selectedMethod={selectedPaymentMethod}
           onSelect={onMethodSelect}
@@ -47,5 +56,29 @@ const PaymentMethods = ({ selectedPaymentMethod, onMethodSelect }) => {
     </>
   );
 };
+
+// QR Code SVG icon component
+const QRCodeIcon = () => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className="text-gray-600"
+  >
+    <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2" fill="none"/>
+    <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2" fill="none"/>
+    <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2" fill="none"/>
+    <rect x="5" y="5" width="3" height="3" fill="currentColor"/>
+    <rect x="16" y="5" width="3" height="3" fill="currentColor"/>
+    <rect x="5" y="16" width="3" height="3" fill="currentColor"/>
+    <rect x="14" y="14" width="2" height="2" fill="currentColor"/>
+    <rect x="17" y="14" width="2" height="2" fill="currentColor"/>
+    <rect x="14" y="17" width="2" height="2" fill="currentColor"/>
+    <rect x="19" y="17" width="2" height="2" fill="currentColor"/>
+    <rect x="17" y="19" width="2" height="2" fill="currentColor"/>
+  </svg>
+);
 
 export default PaymentMethods;
