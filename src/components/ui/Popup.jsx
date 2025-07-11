@@ -1,13 +1,16 @@
 import { X, AlertTriangle, CreditCard } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import siteConfig from "../../config/siteConfig";
+import { calculateWalletBalance } from "../../utils/walletUtils";
 
 const Popup = ({ isVisible, onClose, requiredAmount = 0 }) => {
   const navigate = useNavigate();
   
+  // Get actual wallet balance
+  const currentBalance = calculateWalletBalance();
+  
   const handleAddFunds = () => {
     // Calculate amount needed (required amount minus current balance)
-    const currentBalance = siteConfig.welcomeBonus;
     const amountNeeded = Math.max(requiredAmount - currentBalance, siteConfig.minimumAmount);
     
     // Store the amount needed in localStorage for the payment form
@@ -38,7 +41,7 @@ const Popup = ({ isVisible, onClose, requiredAmount = 0 }) => {
             </h3>
             <p className="text-lg mt-2 text-center text-gray-700">
               Your balance is currently{" "}
-              <strong className="text-green-500">₹{siteConfig.welcomeBonus}</strong>.
+              <strong className="text-green-500">₹{currentBalance}</strong>.
             </p>
             <p className="text-sm mt-2 text-center text-gray-400">
               आपके पास पर्याप्त शेष नहीं है। कृपया पहले फंड जोड़ें।

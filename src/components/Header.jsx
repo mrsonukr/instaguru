@@ -1,11 +1,28 @@
-import React, { useState } from "react";
-import { FiMenu, FiHome, FiCreditCard, FiPhone, FiInfo, FiShare2, FiPackage } from "react-icons/fi";
+import React, { useState, useEffect } from "react";
+import { FiMenu, FiHome, FiCreditCard, FiPhone, FiInfo, FiShare2, FiPackage, FiLink } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import siteConfig from "../config/siteConfig";
+import { calculateWalletBalance } from "../utils/walletUtils";
 import { clearConsole } from "../utils/consoleUtils";
 
 const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(0);
+
+  // Update wallet balance when component mounts or when sidebar opens
+  useEffect(() => {
+    const updateBalance = () => {
+      const balance = calculateWalletBalance();
+      setWalletBalance(balance);
+    };
+    
+    updateBalance();
+    
+    // Update balance when sidebar opens
+    if (isSidebarOpen) {
+      updateBalance();
+    }
+  }, [isSidebarOpen]);
 
   const toggleSidebar = () => {
     // Clear console when opening/closing sidebar
@@ -69,7 +86,7 @@ const Header = () => {
               className="flex items-center p-4 border-b border-gray-200 hover:bg-green-50 transition-colors duration-200 gap-3 text-gray-800 font-medium no-underline"
             >
               <FiCreditCard className="w-6 h-6 text-green-500" />
-              Wallet: ₹ {siteConfig.welcomeBonus}.00
+              Wallet: ₹{walletBalance.toFixed(2)}
             </Link>
           </li>
           <li>
@@ -79,6 +96,15 @@ const Header = () => {
             >
               <FiPackage className="w-6 h-6 text-green-500" />
               My Orders
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/generate-link"
+              className="flex items-center p-4 border-b border-gray-200 hover:bg-green-50 transition-colors duration-200 gap-3 text-gray-800 font-medium no-underline"
+            >
+              <FiLink className="w-6 h-6 text-green-500" />
+              Generate Link
             </Link>
           </li>
           <li>

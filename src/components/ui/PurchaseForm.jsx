@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import COLOR_VARIANTS from "../../utils/colorVariants";
+import { hasSufficientFunds, calculateWalletBalance } from "../../utils/walletUtils";
 import Popup from "../ui/Popup";
 
 const PurchaseForm = ({
@@ -35,12 +36,15 @@ const PurchaseForm = ({
     placeholder: config.placeholder,
   };
 
+  // Get current wallet balance
+  const walletBalance = calculateWalletBalance();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (input.trim()) {
-      const hasSufficientBalance = false; // Replace with actual balance check logic
-      if (!hasSufficientBalance) {
+      // Check if user has sufficient funds
+      const sufficientFunds = hasSufficientFunds(packPrice);
+      if (!sufficientFunds) {
         setShowPopup(true);
       } else if (onSubmit) {
         onSubmit(input);
@@ -78,6 +82,8 @@ const PurchaseForm = ({
           required
           className={`px-3 py-2 rounded border-[1.5px] ${variant.borderColor} focus:outline-none w-full box-border`}
         />
+        
+        
         <button
           type="submit"
           className={`text-center text-white w-full px-6 py-2 rounded-full gap-2 ${variant.buttonBg} ${variant.buttonHover}`}

@@ -3,19 +3,14 @@ import { Link } from "react-router-dom";
 import { PlusCircleIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { Clock, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import Header from "../components/Header";
+import { calculateWalletBalance, getWalletSummary } from "../utils/walletUtils";
 
 const Wallet = () => {
   const [transactions, setTransactions] = useState([]);
+  const [walletSummary, setWalletSummary] = useState(null);
 
-  const walletAmount = transactions.reduce((sum, txn) => {
-    // Only count successful credit transactions for wallet balance
-    if (txn.type === "credit") {
-      return sum + txn.amount;
-    } else if (txn.type === "debit") {
-      return sum - txn.amount;
-    }
-    return sum;
-  }, 0);
+  // Use the utility function to calculate wallet balance
+  const walletAmount = calculateWalletBalance();
 
   // Function to update transaction status from processing to failed after 5 minutes
   const checkAndUpdateProcessingTransactions = () => {
@@ -76,6 +71,9 @@ const Wallet = () => {
       );
 
       setTransactions(sortedTxns);
+      
+      // Update wallet summary
+      setWalletSummary(getWalletSummary());
     };
 
     loadTransactions();
@@ -237,6 +235,11 @@ const Wallet = () => {
               <p className="text-3xl font-bold text-gray-800">
                 ₹{walletAmount.toFixed(2)}
               </p>
+              {walletSummary && (
+                <p className="text-xs text-gray-500 mt-1">
+                  {walletSummary.totalTransactions} transactions • Updated {formatRelativeTime(walletSummary.lastUpdated)}
+                </p>
+              )}
             </div>
             <Link
               to="/addfund"

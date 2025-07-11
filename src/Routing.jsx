@@ -14,6 +14,8 @@ const Wallet = lazy(() => import("./pages/Wallet"));
 const ReferPage = lazy(() => import("./pages/Refer"));
 const Redirecting = lazy(() => import("./pages/Redirecting"));
 const Orders = lazy(() => import("./pages/Orders"));
+const GenerateLink = lazy(() => import("./pages/GenerateLink"));
+const ProcessLink = lazy(() => import("./pages/ProcessLink"));
 
 const Routing = () => {
   return (
@@ -32,6 +34,8 @@ const Routing = () => {
         <Route path="/refer/:referralId" element={<ReferPage />} />
         <Route path="/redirecting" element={<Redirecting />} />
         <Route path="/orders" element={<Orders />} />
+        <Route path="/generate-link" element={<GenerateLink />} />
+        <Route path="/add-funds/:token" element={<ProcessLink />} />
       </Routes>
     </Router>
   );

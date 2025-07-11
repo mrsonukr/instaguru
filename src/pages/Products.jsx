@@ -7,6 +7,7 @@ import PackFilter from "../components/ui/PackFilter";
 import Suggestion from "../components/ui/Suggestion";
 import WelcomePopup from "../components/ui/WelcomePopup";
 import data from "../data/categories.json";
+import { processServiceAvailability } from "../utils/walletUtils";
 import Footer from "../components/ui/Footer";
 import { updatePageSEO, addStructuredData } from "../utils/seoUtils";
 
@@ -14,6 +15,7 @@ const Products = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const [selectedFilter, setSelectedFilter] = useState("All");
+  const [processedServices, setProcessedServices] = useState([]);
 
   const selectedItem = data.find((item) => item.slug === slug);
 
@@ -28,23 +30,36 @@ const Products = () => {
       
       // Add structured data for service
       addStructuredData('service', selectedItem);
+      
+      // Process service availability based on wallet balance
+      const processed = processServiceAvailability([selectedItem]);
+      setProcessedServices(processed);
     }
   }, [selectedItem, navigate]);
 
+  // Update processed services when wallet balance might change
+  useEffect(() => {
+    if (selectedItem) {
+      const processed = processServiceAvailability([selectedItem]);
+      setProcessedServices(processed);
+    }
+  }, [selectedItem]);
   if (!selectedItem) {
     return null; // Or a loader if needed
   }
 
+  const currentService = processedServices[0] || selectedItem;
+
   // Get unique filter values from packs
   const packFilters = [
-    ...new Set(selectedItem.packs.map((pack) => pack.filter)),
+    ...new Set(currentService.packs.map((pack) => pack.filter)),
   ].sort(); // Sort for consistent order
 
   // Filter packs based on selected filter
   const filteredPacks =
     selectedFilter === "All"
-      ? selectedItem.packs
-      : selectedItem.packs.filter((pack) => pack.filter === selectedFilter);
+      ? currentService.packs
+      : currentService.packs.filter((pack) => pack.filter === selectedFilter);
 
   return (
     <div>
@@ -53,30 +68,31 @@ const Products = () => {
       <Header />
       <div className="mt-20">
         <PBanner
-          key={selectedItem.slug}
-          imageSrc={selectedItem.logo}
-          altText={`${selectedItem.name} logo`}
-          title={`Discover ${selectedItem.name} Plans`}
-          description={selectedItem.description}
-          color={selectedItem.color}
+          key={currentService.slug}
+          imageSrc={currentService.logo}
+          altText={`${currentService.name} logo`}
+          title={`Discover ${currentService.name} Plans`}
+          description={currentService.description}
+          color={currentService.color}
         />
         {/* <PackFilter/> */}
         <PackFilter
           packFilters={packFilters}
           onFilterChange={setSelectedFilter}
-          variant={selectedItem.color}
+          variant={currentService.color}
         />
         <div className="m-4 mt-0 flex flex-col items-center">
           {filteredPacks.length > 0 ? (
             filteredPacks.map((pack) => (
               <PackCard
                 key={pack.id}
-                color={selectedItem.color}
+                color={currentService.color}
                 title={pack.title}
                 description={pack.description}
                 price={pack.price}
                 link={`/purchase/${pack.id}`}
-                logo={selectedItem.logo}
+                logo={currentService.logo}
+                packId={pack.id}
               />
             ))
           ) : (

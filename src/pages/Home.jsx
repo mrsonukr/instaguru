@@ -1,13 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import AutoSlider from "../components/AutoSlider";
 import ItemCard from "../components/ui/ItemCard";
 import channels from "../data/categories.json"; // Import the JSON data
+import { processServiceAvailability } from "../utils/walletUtils";
 import WelcomePopup from "../components/ui/WelcomePopup"; // Import the WelcomePopup component
 import Footer from "../components/ui/Footer"; // Import the Footer component
 import { updatePageSEO, addStructuredData } from "../utils/seoUtils";
 
 const Home = () => {
+  const [processedChannels, setProcessedChannels] = useState(channels);
+
   useEffect(() => {
     // Update SEO for home page
     updatePageSEO("home");
@@ -15,6 +18,10 @@ const Home = () => {
     // Add structured data
     addStructuredData("organization");
     addStructuredData("website");
+    
+    // Process service availability based on wallet balance
+    const processed = processServiceAvailability(channels);
+    setProcessedChannels(processed);
   }, []);
 
   return (
@@ -62,7 +69,7 @@ const Home = () => {
         </p>
       </div>
 
-      {channels.map((channel, index) => (
+      {processedChannels.map((channel, index) => (
         <ItemCard key={index} {...channel} />
       ))}
       <Footer />
