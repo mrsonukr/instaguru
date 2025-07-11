@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FiMenu, FiHome, FiCreditCard, FiPhone, FiInfo, FiShare2, FiPackage, FiLink } from "react-icons/fi";
+import { FiMenu, FiHome, FiCreditCard, FiPhone, FiInfo, FiShare2, FiPackage } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import siteConfig from "../config/siteConfig";
 import { calculateWalletBalance } from "../utils/walletUtils";
@@ -96,15 +96,6 @@ const Header = () => {
             >
               <FiPackage className="w-6 h-6 text-green-500" />
               My Orders
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/generate-link"
-              className="flex items-center p-4 border-b border-gray-200 hover:bg-green-50 transition-colors duration-200 gap-3 text-gray-800 font-medium no-underline"
-            >
-              <FiLink className="w-6 h-6 text-green-500" />
-              Generate Link
             </Link>
           </li>
           <li>
