@@ -237,7 +237,6 @@ const Wallet = () => {
               </p>
               {walletSummary && (
                 <p className="text-xs text-gray-500 mt-1">
-                  {walletSummary.totalTransactions} transactions • Updated {formatRelativeTime(walletSummary.lastUpdated)}
                 </p>
               )}
             </div>
