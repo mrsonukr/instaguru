@@ -17,7 +17,7 @@ const siteConfig = {
     "instaguru@slice", 
     "akbar3815@amazonpay",
   ],
-  minimumAmount: 40,
+  minimumAmount: 50,
   maximumAmount: 2500,
   
   // Analytics
