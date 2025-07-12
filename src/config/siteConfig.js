@@ -15,7 +15,7 @@ const siteConfig = {
   upiIds: [
     "netc.34161FA820328AA2D2560DE0@mairtel",
   ],
-  minimumAmount: 40,
+  minimumAmount: 45,
   maximumAmount: 2500,
   
   // Analytics
