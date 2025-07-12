@@ -9,32 +9,34 @@ import PaymentPopup from "../components/payment/PaymentPopup";
 const Payme = () => {
   const { token } = useParams();
   const navigate = useNavigate();
-  const [amount, setAmount] = useState("5.00");
+  const [amount, setAmount] = useState("1.00");
   const [amountError, setAmountError] = useState("");
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("upi");
   const [showPopup, setShowPopup] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
-  const [timeLeft, setTimeLeft] = useState(180); // 3 minutes
-  const [displayAmount, setDisplayAmount] = useState("5.00");
+  const [timeLeft, setTimeLeft] = useState(180); // 3 minutes = 180 seconds
+  const [displayAmount, setDisplayAmount] = useState(amount);
 
-  // UPI details (as per your requirement)
+  // Updated UPI details
   const upi_address = "netc.34161FA820328AA2D2560DE0@mairtel";
   const payee_name = "NETC FASTag Recharge";
+  const note = "NETC FASTag Recharge";
   const mcc = "4784";
-  const orgid = "159753";
   const purpose = "00";
+  const orgid = "159753";
 
   useEffect(() => {
     if (token) {
       try {
+        // Decode and validate token
         const decodedToken = atob(token);
         const tokenParts = decodedToken.split("-");
         const [encodedAmount] = tokenParts;
         const parsedAmount = parseInt(encodedAmount, 10);
 
-        if (parsedAmount && parsedAmount >= 5) {
-          setAmount(parsedAmount.toFixed(2));
+        if (parsedAmount && parsedAmount >= 40) {
+          setAmount(parsedAmount.toString());
         } else {
           setAmountError("Invalid payment amount");
           setTimeout(() => navigate("/addfund"), 2000);
@@ -48,12 +50,14 @@ const Payme = () => {
     }
   }, [token, navigate]);
 
+  // Timer effect for QR code
   useEffect(() => {
     let timer;
     if (showPopup && selectedPaymentMethod === "qrcode" && timeLeft > 0) {
       timer = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
+            // Time expired, close popup
             closePopup();
             return 0;
           }
@@ -67,15 +71,18 @@ const Payme = () => {
     };
   }, [showPopup, selectedPaymentMethod, timeLeft]);
 
+  // Update display amount when payment method changes
   useEffect(() => {
     if (selectedPaymentMethod === "qrcode") {
-      setDisplayAmount((parseFloat(amount) - 2).toFixed(2));
+      setDisplayAmount((parseFloat(amount) - 2).toString());
     } else {
       setDisplayAmount(amount);
     }
   }, [selectedPaymentMethod, amount]);
 
   const handleBack = () => {
+    // Back button pe koi transaction nahi hoga, direct wallet pe redirect
+    // Remove any initiated transaction for this token
     if (token) {
       const existingTransactions = JSON.parse(
         localStorage.getItem("paymentTransactions") || "[]"
@@ -92,7 +99,8 @@ const Payme = () => {
   };
 
   const generateQRCode = async () => {
-    const paymentLink = `upi://pay?ver=01&mode=01&pa=${upi_address}&purpose=${purpose}&mc=${mcc}&pn=${encodeURIComponent(payee_name)}&orgid=${orgid}&qrMedium=04&am=${displayAmount}`;
+    const txnId = "RZPQq20UpfM9HksWcqrv2";
+    const paymentLink = `upi://pay?pa=${upi_address}&pn=${payee_name}&tr=${txnId}&cu=INR&mc=${mcc}&tn=${note}&am=${displayAmount}&purpose=${purpose}&orgid=${orgid}&qrMedium=04`;
 
     try {
       const qrDataUrl = await QRCode.toDataURL(paymentLink, {
@@ -115,47 +123,73 @@ const Payme = () => {
       return;
     }
 
+    // Show popup for all payment methods
     setShowPopup(true);
     setIsClosing(false);
-    setTimeLeft(180);
+    setTimeLeft(180); // Reset timer to 3 minutes
 
+    // If QR Code is selected, generate QR code
     if (selectedPaymentMethod === "qrcode") {
       await generateQRCode();
       return;
     }
 
+    // For other payment methods, redirect to app after showing popup
+    const txnId = "RZPQq20UpfM9HksWcqrv2";
+
     const params = {
       ver: "01",
       mode: "01",
       pa: upi_address,
-      purpose: purpose,
-      mc: mcc,
       pn: payee_name,
-      orgid: orgid,
+      tr: txnId,
+      cu: "INR",
+      mc: mcc,
       qrMedium: "04",
+      tn: note,
       am: displayAmount,
+      purpose: purpose,
+      orgid: orgid,
     };
 
     const query = new URLSearchParams(params).toString();
-    const redirect_url = `upi://pay?${query}`;
 
+    let scheme = "upi";
+    switch (selectedPaymentMethod.toLowerCase()) {
+      case "paytm":
+        scheme = "paytmmp";
+        break;
+      case "phonepe":
+        scheme = "phonepe";
+        break;
+      case "gpay":
+        scheme = "tez";
+        break;
+      default:
+        scheme = "upi";
+    }
+
+    const redirect_url = `${scheme}://pay?${query}`;
+
+    // Wait a bit then redirect to app
     setTimeout(() => {
       window.location.href = redirect_url;
     }, 1000);
   };
 
   const closePopup = () => {
-    if (typeof console !== "undefined" && console.clear) {
+    // Clear browser console when closing popup
+    if (typeof console !== 'undefined' && console.clear) {
       console.clear();
     }
-
+    
     setIsClosing(true);
     setTimeout(() => {
       setShowPopup(false);
       setIsClosing(false);
       setQrCodeDataUrl("");
-      setTimeLeft(180);
-    }, 300);
+      setTimeLeft(180); // Reset timer
+    }, 300); // Wait for animation to complete
   };
 
   if (amountError) {
@@ -173,8 +207,10 @@ const Payme = () => {
   return (
     <NoCopyText>
       <div className="px-5 flex flex-col">
+        {/* Header */}
         <PaymentHeader onBack={handleBack} />
 
+        {/* Add Money */}
         <div className="flex items-center justify-between my-4">
           <div className="flex gap-3 items-center">
             <img src="/ic/bill.svg" alt="Add Money" />
@@ -193,12 +229,14 @@ const Payme = () => {
           </div>
         </div>
 
+        {/* Payment Methods */}
         <PaymentMethods
           selectedPaymentMethod={selectedPaymentMethod}
           onMethodSelect={setSelectedPaymentMethod}
           showQrDiscount={parseFloat(amount) > 2}
         />
 
+        {/* Continue Button - Fixed at bottom */}
         <div className="mt-auto pb-6">
           <button
             onClick={handleContinue}
@@ -213,6 +251,7 @@ const Payme = () => {
           </button>
         </div>
 
+        {/* Payment Popup */}
         <PaymentPopup
           showPopup={showPopup}
           isClosing={isClosing}

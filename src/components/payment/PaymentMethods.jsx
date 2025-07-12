@@ -2,7 +2,7 @@ import React from "react";
 import WalletOption from "./WalletOption";
 import SectionLabel from "./SectionLabel";
 
-const PaymentMethods = ({ selectedPaymentMethod, onMethodSelect, showUpiDiscount = false }) => {
+const PaymentMethods = ({ selectedPaymentMethod, onMethodSelect, showQrDiscount = false }) => {
   return (
     <>
       {/* PAY WITH UPI */}
@@ -34,9 +34,11 @@ const PaymentMethods = ({ selectedPaymentMethod, onMethodSelect, showUpiDiscount
           label={
             <div className="flex items-center gap-2">
               <span>Other UPI</span>
-              <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-semibold">
-                ₹2 OFF
-              </span>
+              {showQrDiscount && (
+                <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-semibold">
+                  ₹2 OFF
+                </span>
+              )}
             </div>
           }
           value="upi"
