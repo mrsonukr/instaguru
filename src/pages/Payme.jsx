@@ -68,7 +68,7 @@ const Payme = () => {
   }, [showPopup, selectedPaymentMethod, timeLeft]);
 
   useEffect(() => {
-    if (selectedPaymentMethod === "qrcode") {
+    if (selectedPaymentMethod === "upi") {
       setDisplayAmount((parseFloat(amount) - 2).toFixed(2));
     } else {
       setDisplayAmount(amount);
@@ -179,14 +179,14 @@ const Payme = () => {
           <div className="flex gap-3 items-center">
             <img src="/ic/bill.svg" alt="Add Money" />
             <p>Add Money</p>
-            {selectedPaymentMethod === "qrcode" && (
+            {selectedPaymentMethod === "upi" && (
               <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-semibold">
                 ₹2 OFF
               </span>
             )}
           </div>
           <div className="flex items-center gap-2">
-            {selectedPaymentMethod === "qrcode" && parseFloat(amount) > 2 && (
+            {selectedPaymentMethod === "upi" && parseFloat(amount) > 2 && (
               <span className="text-sm text-gray-500 line-through">₹{amount}</span>
             )}
             <span className="font-medium">₹{displayAmount}</span>
@@ -196,7 +196,7 @@ const Payme = () => {
         <PaymentMethods
           selectedPaymentMethod={selectedPaymentMethod}
           onMethodSelect={setSelectedPaymentMethod}
-          showQrDiscount={parseFloat(amount) > 2}
+          showUpiDiscount={false}
         />
 
         <div className="mt-auto pb-6">
