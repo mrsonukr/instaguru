@@ -31,9 +31,16 @@ const PaymentMethods = ({ selectedPaymentMethod, onMethodSelect, showQrDiscount 
         />
         <WalletOption
           icon="/ic/upi.svg"
+          label="Other UPI"
+          value="upi"
+          selectedMethod={selectedPaymentMethod}
+          onSelect={onMethodSelect}
+        />
+        <WalletOption
+          icon={<QRCodeIcon />}
           label={
             <div className="flex items-center gap-2">
-              <span>Other UPI</span>
+              <span>Scan QR Code</span>
               {showQrDiscount && (
                 <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-semibold">
                   ₹2 OFF
@@ -41,13 +48,6 @@ const PaymentMethods = ({ selectedPaymentMethod, onMethodSelect, showQrDiscount 
               )}
             </div>
           }
-          value="upi"
-          selectedMethod={selectedPaymentMethod}
-          onSelect={onMethodSelect}
-        />
-        <WalletOption
-          icon={<QRCodeIcon />}
-          label="Scan QR Code"
           value="qrcode"
           selectedMethod={selectedPaymentMethod}
           onSelect={onMethodSelect}

