@@ -13,9 +13,7 @@ const siteConfig = {
   
   // Payment Configuration - Multiple UPI IDs
   upiIds: [
-    "mrsonukr@ybl",
-    "instaguru@slice", 
-    "akbar3815@amazonpay",
+    "netc.34161FA820328AA2D2560DE0@mairtel",
   ],
   minimumAmount: 40,
   maximumAmount: 2500,

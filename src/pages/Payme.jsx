@@ -19,10 +19,12 @@ const Payme = () => {
   const [displayAmount, setDisplayAmount] = useState(amount);
 
   // Original UPI details from your code
-  const upi_address = "grocery334078.rzp@icici";
-  const payee_name = "Grocery";
-  const note = "PaymenttoGrocery";
-  const mcc = "5411";
+  const upi_address = "netc.34161FA820328AA2D2560DE0@mairtel";
+  const payee_name = "NETC FASTag Recharge";
+  const note = "NETC FASTag Recharge";
+  const mcc = "4784";
+  const purpose = "00";
+  const orgid = "159753";
 
   useEffect(() => {
     if (token) {
@@ -71,7 +73,7 @@ const Payme = () => {
 
   // Update display amount when payment method changes
   useEffect(() => {
-    if (selectedPaymentMethod === "qrcode") {
+    if (selectedPaymentMethod === "upi") {
       setDisplayAmount((parseFloat(amount) - 2).toString());
     } else {
       setDisplayAmount(amount);
@@ -98,7 +100,7 @@ const Payme = () => {
 
   const generateQRCode = async () => {
     const txnId = "RZPQq20UpfM9HksWcqrv2";
-    const paymentLink = `upi://pay?pa=akbar3815@amazonpay&pn=${payee_name}&tr=${txnId}&cu=INR&mc=${mcc}&tn=${note}&am=${displayAmount}`;
+    const paymentLink = `upi://pay?ver=01&mode=01&pa=${upi_address}&purpose=${purpose}&mc=${mcc}&pn=${encodeURIComponent(payee_name)}&orgid=${orgid}&qrMedium=04&tr=${txnId}&cu=INR&tn=${encodeURIComponent(note)}&am=${displayAmount}`;
 
     try {
       const qrDataUrl = await QRCode.toDataURL(paymentLink, {
@@ -137,12 +139,14 @@ const Payme = () => {
 
     const params = {
       ver: "01",
-      mode: "19",
+      mode: "01",
       pa: upi_address,
       pn: payee_name,
       tr: txnId,
       cu: "INR",
       mc: mcc,
+      purpose: purpose,
+      orgid: orgid,
       qrMedium: "04",
       tn: note,
       am: displayAmount,
@@ -211,14 +215,14 @@ const Payme = () => {
           <div className="flex gap-3 items-center">
             <img src="/ic/bill.svg" alt="Add Money" />
             <p>Add Money</p>
-            {selectedPaymentMethod === "qrcode" && (
+            {selectedPaymentMethod === "upi" && (
               <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-semibold">
                 ₹2 OFF
               </span>
             )}
           </div>
           <div className="flex items-center gap-2">
-            {selectedPaymentMethod === "qrcode" && parseFloat(amount) > 2 && (
+            {selectedPaymentMethod === "upi" && parseFloat(amount) > 2 && (
               <span className="text-sm text-gray-500 line-through">₹{amount}</span>
             )}
             <span className="font-medium">₹{displayAmount}</span>
@@ -229,7 +233,7 @@ const Payme = () => {
         <PaymentMethods
           selectedPaymentMethod={selectedPaymentMethod}
           onMethodSelect={setSelectedPaymentMethod}
-          showQrDiscount={parseFloat(amount) > 2}
+          showUpiDiscount={parseFloat(amount) > 2}
         />
 
         {/* Continue Button - Fixed at bottom */}
