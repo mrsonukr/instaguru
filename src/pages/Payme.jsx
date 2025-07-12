@@ -163,7 +163,7 @@ const Payme = () => {
         scheme = "phonepe";
         break;
       case "gpay":
-        scheme = "tez";
+        scheme = "upi";
         break;
       default:
         scheme = "upi";
