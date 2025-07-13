@@ -16,6 +16,8 @@ const Redirecting = lazy(() => import("./pages/Redirecting"));
 const Orders = lazy(() => import("./pages/Orders"));
 const GenerateLink = lazy(() => import("./pages/GenerateLink"));
 const ProcessLink = lazy(() => import("./pages/ProcessLink"));
+const Refund = lazy(() => import("./pages/Refund"));
+
 
 const Routing = () => {
   return (
@@ -23,6 +25,7 @@ const Routing = () => {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/refund" element={<Refund />} />
         <Route path="/refer" element={<ReferPage />} />
         <Route path="/about" element={<About />} />
         <Route path="/purchase/:id" element={<Purchase />} />
@@ -36,6 +39,7 @@ const Routing = () => {
         <Route path="/orders" element={<Orders />} />
         <Route path="/generate-link" element={<GenerateLink />} />
         <Route path="/add-funds/:token" element={<ProcessLink />} />
+        {/* Add more routes as needed */}
       </Routes>
     </Router>
   );
