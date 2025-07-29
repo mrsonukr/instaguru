@@ -47,7 +47,7 @@ const siteConfig = {
   ],
   
   // Bonuses
-  welcomeBonus: 10,
+  welcomeBonus: 5,
   referralBonus: 10,
   
   // Logo path

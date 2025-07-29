@@ -15,7 +15,7 @@ const Payme = () => {
   const navigate = useNavigate();
   const [amount, setAmount] = useState("1.00");
   const [amountError, setAmountError] = useState("");
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("upi");
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("phonepe");
   const [showPopup, setShowPopup] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");

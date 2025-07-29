@@ -33,28 +33,28 @@
       {
         "id": 1000,
         "title": "Lifetime Blue Tick",
-        "price": 399,
+        "price": 299,
         "description": "Parmanent verification for your profile.",
         "filter": "Bluetick"
       },
       {
         "id": 1001,
         "title": "1000 Followers",
-        "price": 59,
+        "price": 49,
         "description": "Indian Real Non-drop Followers",
         "filter": "Followers"
       },
       {
         "id": 1002,
         "title": "2000 Followers",
-        "price": 89,
+        "price": 79,
         "description": "Indian Real Non-drop Followers",
         "filter": "Followers"
       },
       {
         "id": 1003,
         "title": "5000 Followers",
-        "price": 149,
+        "price": 119,
         "description": "Indian Real Non-drop Followers",
         "filter": "Followers"
       },
@@ -62,6 +62,21 @@
         "id": 1004,
         "title": "10000 Followers",
         "price": 249,
+        "description": "Indian Real Non-drop Followers",
+        "filter": "Followers"
+      }
+      ,
+      {
+        "id": 11004,
+        "title": "25000 Followers",
+        "price": 399,
+        "description": "Indian Real Non-drop Followers",
+        "filter": "Followers"
+      },
+       {
+        "id": 11005,
+        "title": "50000 Followers",
+        "price": 599,
         "description": "Indian Real Non-drop Followers",
         "filter": "Followers"
       },
@@ -214,6 +229,13 @@
         "id": 1020,
         "title": "10000 Subscribers",
         "price": 249,
+        "description": "Indian Real Non-drop Subscribers",
+        "filter": "Subscribers"
+      },
+      {
+        "id": 10160,
+        "title": "50000 Subscribers",
+        "price": 699,
         "description": "Indian Real Non-drop Subscribers",
         "filter": "Subscribers"
       },
