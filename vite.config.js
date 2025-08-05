@@ -10,8 +10,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
       manifest: {
-        name: 'InstaGuru',
-        short_name: 'InstaGuru',
+        name: 'smmguru',
+        short_name: 'smmguru',
         theme_color: '#ffffff',
         icons: [
           {

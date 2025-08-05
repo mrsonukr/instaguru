@@ -108,12 +108,12 @@ const seoData = {
   about: {
     title: `About ${siteConfig.siteName} - Leading SMM Panel Since 2+ Years`,
     description: `Learn about ${siteConfig.siteName}, the trusted SMM panel serving thousands of customers for 2+ years. Real followers, subscribers & premium OTT services with 24/7 support.`,
-    keywords: `about instaguru, smm panel, social media marketing company, trusted smm services`
+    keywords: `about smmguru, smm panel, social media marketing company, trusted smm services`
   },
   contact: {
     title: `Contact ${siteConfig.siteName} - 24/7 Customer Support`,
     description: `Get in touch with ${siteConfig.siteName} support team. Available 24/7 via email and WhatsApp for all your social media marketing needs and queries.`,
-    keywords: `contact instaguru, customer support, smm panel support, social media marketing help`
+    keywords: `contact smmguru, customer support, smm panel support, social media marketing help`
   },
   refer: {
     title: `Refer & Earn ₹${siteConfig.referralBonus} - ${siteConfig.siteName}`,

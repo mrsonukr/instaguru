@@ -1,15 +1,15 @@
 // Site Configuration - Change everything from here
 const siteConfig = {
   // Website Information
-  siteName: "InstaGuru",
+  siteName: "SmmGuru",
   siteDescription:
     "Get real followers, subscribers & OTT subscriptions at the lowest prices. Trusted by thousands for Instagram, YouTube, Facebook and more.",
   siteKeywords:
     "social media marketing, instagram followers, youtube subscribers, facebook likes, social media services",
-  siteUrl: "https://instaguru.shop",
+  siteUrl: "https://smmguru.shop",
 
   // Contact Information
-  supportEmail: "help@instaguru.shop",
+  supportEmail: "help@smmguru.shop",
   supportPhone: "+91 72259 79671",
   whatsappNumber: "917225979671",
 
