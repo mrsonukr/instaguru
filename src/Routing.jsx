@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ScrollToTop from "./components/ui/ScrollToTop";
 import Home from "./pages/Home";
 import Payme from "./pages/Payme";
+import Getdata from "./pages/Getdata";
 
 // Lazy load non-critical routes
 const About = lazy(() => import("./pages/About"));
@@ -24,6 +25,7 @@ const Routing = () => {
     <Router>
       <ScrollToTop />
       <Routes>
+        <Route path="/getdata" element={<Getdata />} />
         <Route path="/" element={<Home />} />
         <Route path="/refund" element={<Refund />} />
         <Route path="/refer" element={<ReferPage />} />
