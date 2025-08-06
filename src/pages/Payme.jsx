@@ -30,7 +30,7 @@ const Payme = () => {
         const [encodedAmount] = tokenParts;
         const parsedAmount = parseInt(encodedAmount, 10);
 
-        if (parsedAmount && parsedAmount >= 40) {
+        if (parsedAmount && parsedAmount >= 30) {
           setAmount(parsedAmount.toString());
         } else {
           setAmountError("Invalid payment amount");
