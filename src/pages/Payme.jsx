@@ -22,7 +22,6 @@ const Payme = () => {
   const [timeLeft, setTimeLeft] = useState(180);
   const [displayAmount, setDisplayAmount] = useState(amount);
 
-  // Decode token and set amount
   useEffect(() => {
     if (token) {
       try {
@@ -44,7 +43,6 @@ const Payme = () => {
     }
   }, [token, navigate]);
 
-  // QR code countdown
   useEffect(() => {
     let timer;
     if (showPopup && selectedPaymentMethod === "qrcode" && timeLeft > 0) {
@@ -61,9 +59,8 @@ const Payme = () => {
     return () => clearInterval(timer);
   }, [showPopup, selectedPaymentMethod, timeLeft]);
 
-  // Apply ₹2 discount for UPI & PhonePe
   useEffect(() => {
-    if (selectedPaymentMethod === "upi" || selectedPaymentMethod === "phonepe") {
+    if (selectedPaymentMethod === "upi") {
       setDisplayAmount((parseFloat(amount) - 2).toString());
     } else {
       setDisplayAmount(amount);
@@ -168,17 +165,16 @@ const Payme = () => {
           <div className="flex gap-3 items-center">
             <img src="/ic/bill.svg" alt="Add Money" />
             <p>Add Money</p>
-            {(selectedPaymentMethod === "upi" || selectedPaymentMethod === "phonepe") && (
+            {selectedPaymentMethod === "upi" && (
               <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-semibold">
                 ₹2 OFF
               </span>
             )}
           </div>
           <div className="flex items-center gap-2">
-            {(selectedPaymentMethod === "upi" || selectedPaymentMethod === "phonepe") &&
-              parseFloat(amount) > 2 && (
-                <span className="text-sm text-gray-500 line-through">₹{amount}</span>
-              )}
+            {selectedPaymentMethod === "upi" && parseFloat(amount) > 2 && (
+              <span className="text-sm text-gray-500 line-through">₹{amount}</span>
+            )}
             <span className="font-medium">₹{displayAmount}</span>
           </div>
         </div>
@@ -186,7 +182,7 @@ const Payme = () => {
         <PaymentMethods
           selectedPaymentMethod={selectedPaymentMethod}
           onMethodSelect={setSelectedPaymentMethod}
-          showDiscount={parseFloat(amount) > 2 && (selectedPaymentMethod === "upi" || selectedPaymentMethod === "phonepe")}
+          showUpiDiscount={parseFloat(amount) > 2}
         />
 
         <div className="mt-auto pb-6">
