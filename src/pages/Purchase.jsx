@@ -1,10 +1,12 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { BsCheckCircleFill } from "react-icons/bs";
+import { ArrowRightIcon } from "@heroicons/react/24/solid";
 import Header from "../components/Header";
 import PurchaseForm from "../components/ui/PurchaseForm";
 import servicesData from "../data/categories.json";
 import { updatePageSEO } from "../utils/seoUtils";
+import COLOR_VARIANTS from "../utils/colorVariants";
 
 const Purchase = () => {
   const { id } = useParams();
@@ -42,10 +44,39 @@ const Purchase = () => {
     );
   }
 
+  const variant = COLOR_VARIANTS[service.color] || COLOR_VARIANTS.red;
   return (
     <div>
       <Header />
       <div className="mt-20 m-4">
+        {/* Pack Details Card */}
+        <div className={`flex items-center ${variant.cardBg} rounded-lg p-4 w-full mb-4`}>
+          <div className="flex-shrink-0 flex items-center">
+            <img
+              src={service.logo}
+              alt={`${service.name} logo`}
+              className="h-12 w-12 rounded-full object-cover"
+              onError={(e) => {
+                e.target.src = '/ic/logo.svg';
+              }}
+            />
+          </div>
+          <div className="flex flex-col flex-grow pl-4 pr-4 min-w-0">
+            <h3 className="text-sm font-semibold text-gray-800 truncate">
+              {pack.title}
+            </h3>
+            <p className="text-xs text-gray-600 mt-1 truncate">{pack.description}</p>
+            <p className="text-xs text-gray-500 mt-1">
+              {service.name} • {pack.filter}
+            </p>
+          </div>
+          <div
+            className={`flex-shrink-0 text-white text-sm px-4 py-2 rounded-full flex items-center gap-1 ${variant.buttonBg}`}
+          >
+            {pack.price}₹
+          </div>
+        </div>
+
         <PurchaseForm
           serviceData={service}
           color={service.color}
