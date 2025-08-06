@@ -2,7 +2,7 @@ import React from "react";
 import WalletOption from "./WalletOption";
 import SectionLabel from "./SectionLabel";
 
-const PaymentMethods = ({ selectedPaymentMethod, onMethodSelect, showUpiDiscount = false }) => {
+const PaymentMethods = ({ selectedPaymentMethod, onMethodSelect, showUpiDiscount = false, showPhonePeDiscount = false }) => {
   return (
     <>
       {/* PAY WITH UPI */}
@@ -17,7 +17,16 @@ const PaymentMethods = ({ selectedPaymentMethod, onMethodSelect, showUpiDiscount
         />
         <WalletOption
           icon="/ic/phonepe.svg"
-          label="Phone Pe"
+          label={
+            <div className="flex items-center gap-2">
+              <span>Phone Pe</span>
+              {showPhonePeDiscount && (
+                <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-semibold">
+                  ₹3 OFF
+                </span>
+              )}
+            </div>
+          }
           value="phonepe"
           selectedMethod={selectedPaymentMethod}
           onSelect={onMethodSelect}

@@ -62,6 +62,8 @@ const Payme = () => {
   useEffect(() => {
     if (selectedPaymentMethod === "upi") {
       setDisplayAmount((parseFloat(amount) - 2).toString());
+    } else if (selectedPaymentMethod === "phonepe") {
+      setDisplayAmount((parseFloat(amount) - 3).toString());
     } else {
       setDisplayAmount(amount);
     }
@@ -170,9 +172,15 @@ const Payme = () => {
                 ₹2 OFF
               </span>
             )}
+            {selectedPaymentMethod === "phonepe" && (
+              <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-semibold">
+                ₹3 OFF
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-2">
-            {selectedPaymentMethod === "upi" && parseFloat(amount) > 2 && (
+            {((selectedPaymentMethod === "upi" && parseFloat(amount) > 2) || 
+              (selectedPaymentMethod === "phonepe" && parseFloat(amount) > 3)) && (
               <span className="text-sm text-gray-500 line-through">₹{amount}</span>
             )}
             <span className="font-medium">₹{displayAmount}</span>
@@ -183,6 +191,7 @@ const Payme = () => {
           selectedPaymentMethod={selectedPaymentMethod}
           onMethodSelect={setSelectedPaymentMethod}
           showUpiDiscount={parseFloat(amount) > 2}
+          showPhonePeDiscount={parseFloat(amount) > 3}
         />
 
         <div className="mt-auto pb-6">
