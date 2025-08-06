@@ -25,15 +25,22 @@ const siteConfig = {
   banners: [
     {
       id: 1,
-      src: "/banner/banner-1.webp",
+      src: "/banner/banner1.webp",
       alt: "Banner 1",
       width: 1000,
       height: 367,
     },
     {
       id: 2,
-      src: "/banner/banner-2.webp",
+      src: "/banner/banner2.webp",
       alt: "Banner 2",
+      width: 1000,
+      height: 367,
+    },
+    {
+      id: 3,
+      src: "/banner/banner3.webp",
+      alt: "Banner 3",
       width: 1000,
       height: 367,
     },
