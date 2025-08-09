@@ -10,7 +10,7 @@ import { getTranslation } from "../data/translations";
 const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0);
-  const { language, toggleLanguage } = useLanguage();
+  const { language, toggleLanguage, getDefaultLanguage } = useLanguage();
 
   // Update wallet balance when component mounts or when sidebar opens
   useEffect(() => {
@@ -63,6 +63,7 @@ const Header = () => {
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
                 language === 'hi' ? 'bg-green-600' : 'bg-gray-200'
               }`}
+              title={`Current: ${language === 'hi' ? 'Hindi' : 'English'} | Default: ${getDefaultLanguage() === 'hi' ? 'Hindi' : 'English'}`}
             >
               <span
                 className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
