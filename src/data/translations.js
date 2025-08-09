@@ -89,6 +89,7 @@ export const translations = {
     scanQRCodeAndPay: "Complete your payment",
     paymentsProcessedAutomatically: "Payments are processed automatically; you don't need to provide UTR information.",
     fundsAddedAutomatically: "Funds will be added automatically in 1-4 minutes.",
+    liveCustomersBuying: "Customers Are Buying Now",
     
     // Categories
     instagram: {
@@ -257,6 +258,7 @@ export const translations = {
     scanQRCodeAndPay: "अपना भुगतान पूरा करें",
     paymentsProcessedAutomatically: "भुगतान स्वचालित रूप से संसाधित किए जाते हैं; आपको UTR जानकारी प्रदान करने की आवश्यकता नहीं है।",
     fundsAddedAutomatically: "फंड 1-4 मिनट में स्वचालित रूप से जोड़े जाएंगे।",
+    liveCustomersBuying: "ग्राहक अभी खरीद रहे हैं",
     
     // Categories
     instagram: {
