@@ -9,36 +9,6 @@ const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0);
   const [isSwitchOn, setIsSwitchOn] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState("हिंदी");
-
-  // Auto-detect browser language on component mount
-  useEffect(() => {
-    const detectLanguage = () => {
-      // Check if user has manually set a preference
-      const savedLanguage = localStorage.getItem('userLanguagePreference');
-      
-      if (savedLanguage) {
-        // Use saved preference
-        const isHindi = savedLanguage === 'hindi';
-        setIsSwitchOn(isHindi);
-        setCurrentLanguage(isHindi ? "हिंदी" : "ENG");
-      } else {
-        // Auto-detect from browser language
-        const browserLang = navigator.language || navigator.userLanguage;
-        const isHindi = browserLang.startsWith('hi') || browserLang.startsWith('hi-IN');
-        
-        if (isHindi) {
-          setIsSwitchOn(true);
-          setCurrentLanguage("हिंदी");
-        } else {
-          setIsSwitchOn(false);
-          setCurrentLanguage("ENG");
-        }
-      }
-    };
-    
-    detectLanguage();
-  }, []);
 
   // Update wallet balance when component mounts or when sidebar opens
   useEffect(() => {
@@ -65,19 +35,8 @@ const Header = () => {
     const newState = !isSwitchOn;
     setIsSwitchOn(newState);
     
-    // Update language text based on switch state
-    if (newState) {
-      setCurrentLanguage("हिंदी");
-      // Save Hindi preference
-      localStorage.setItem('userLanguagePreference', 'hindi');
-    } else {
-      setCurrentLanguage("ENG");
-      // Save English preference
-      localStorage.setItem('userLanguagePreference', 'english');
-    }
-    
     // Add your switch functionality here
-    console.log("Language switched to:", newState ? "Hindi" : "English");
+    console.log("Switch toggled:", newState);
   };
 
   return (
@@ -98,7 +57,9 @@ const Header = () => {
         <div className="flex items-center gap-3">
           {/* Switch */}
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-700">{currentLanguage}</span>
+            <span className="text-sm font-medium text-gray-700">
+              {isSwitchOn ? "हिंदी" : "ENG"}
+            </span>
             <button
               onClick={toggleSwitch}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
