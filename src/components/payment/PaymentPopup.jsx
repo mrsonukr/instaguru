@@ -167,7 +167,7 @@ const PaymentPopup = ({
                       : selectedPaymentMethod === "gpay"
                       ? "Google Pay"
                       : "UPI"}{" "}
-                    , please try another payment method.
+                   
                   </>
                 ) : (
                   <>
