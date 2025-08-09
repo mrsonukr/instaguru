@@ -8,6 +8,37 @@ import { clearConsole } from "../utils/consoleUtils";
 const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0);
+  const [isSwitchOn, setIsSwitchOn] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState("हिंदी");
+
+  // Auto-detect browser language on component mount
+  useEffect(() => {
+    const detectLanguage = () => {
+      // Check if user has manually set a preference
+      const savedLanguage = localStorage.getItem('userLanguagePreference');
+      
+      if (savedLanguage) {
+        // Use saved preference
+        const isHindi = savedLanguage === 'hindi';
+        setIsSwitchOn(isHindi);
+        setCurrentLanguage(isHindi ? "हिंदी" : "ENG");
+      } else {
+        // Auto-detect from browser language
+        const browserLang = navigator.language || navigator.userLanguage;
+        const isHindi = browserLang.startsWith('hi') || browserLang.startsWith('hi-IN');
+        
+        if (isHindi) {
+          setIsSwitchOn(true);
+          setCurrentLanguage("हिंदी");
+        } else {
+          setIsSwitchOn(false);
+          setCurrentLanguage("ENG");
+        }
+      }
+    };
+    
+    detectLanguage();
+  }, []);
 
   // Update wallet balance when component mounts or when sidebar opens
   useEffect(() => {
@@ -30,6 +61,25 @@ const Header = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  const toggleSwitch = () => {
+    const newState = !isSwitchOn;
+    setIsSwitchOn(newState);
+    
+    // Update language text based on switch state
+    if (newState) {
+      setCurrentLanguage("हिंदी");
+      // Save Hindi preference
+      localStorage.setItem('userLanguagePreference', 'hindi');
+    } else {
+      setCurrentLanguage("ENG");
+      // Save English preference
+      localStorage.setItem('userLanguagePreference', 'english');
+    }
+    
+    // Add your switch functionality here
+    console.log("Language switched to:", newState ? "Hindi" : "English");
+  };
+
   return (
     <>
       {/* Header with Logo and Menu Icon */}
@@ -43,11 +93,33 @@ const Header = () => {
             />
           </Link>
         </div>
-        <div
-          className="menu-icon cursor-pointer p-2 rounded-full hover:bg-green-200 transition-colors duration-200"
-          onClick={toggleSidebar}
-        >
-          <FiMenu className="h-6 w-6" />
+        
+        {/* Switch and Menu Icon Container */}
+        <div className="flex items-center gap-3">
+          {/* Switch */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-gray-700">{currentLanguage}</span>
+            <button
+              onClick={toggleSwitch}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
+                isSwitchOn ? 'bg-green-600' : 'bg-gray-200'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
+                  isSwitchOn ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+          
+          {/* Menu Icon */}
+          <div
+            className="menu-icon cursor-pointer p-2 rounded-full hover:bg-green-200 transition-colors duration-200"
+            onClick={toggleSidebar}
+          >
+            <FiMenu className="h-6 w-6" />
+          </div>
         </div>
       </header>
 
