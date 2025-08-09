@@ -4,11 +4,13 @@ import { Link } from "react-router-dom";
 import siteConfig from "../config/siteConfig";
 import { calculateWalletBalance } from "../utils/walletUtils";
 import { clearConsole } from "../utils/consoleUtils";
+import { useLanguage } from "../context/LanguageContext";
+import { getTranslation } from "../data/translations";
 
 const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0);
-  const [isSwitchOn, setIsSwitchOn] = useState(false);
+  const { language, toggleLanguage } = useLanguage();
 
   // Update wallet balance when component mounts or when sidebar opens
   useEffect(() => {
@@ -32,11 +34,7 @@ const Header = () => {
   };
 
   const toggleSwitch = () => {
-    const newState = !isSwitchOn;
-    setIsSwitchOn(newState);
-    
-    // Add your switch functionality here
-    console.log("Switch toggled:", newState);
+    toggleLanguage();
   };
 
   return (
@@ -58,17 +56,17 @@ const Header = () => {
           {/* Switch */}
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-gray-700">
-              {isSwitchOn ? "हिंदी" : "ENG"}
+              {language === 'hi' ? "हिंदी" : "ENG"}
             </span>
             <button
               onClick={toggleSwitch}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
-                isSwitchOn ? 'bg-green-600' : 'bg-gray-200'
+                language === 'hi' ? 'bg-green-600' : 'bg-gray-200'
               }`}
             >
               <span
                 className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
-                  isSwitchOn ? 'translate-x-6' : 'translate-x-1'
+                  language === 'hi' ? 'translate-x-6' : 'translate-x-1'
                 }`}
               />
             </button>
@@ -110,7 +108,7 @@ const Header = () => {
               className="flex items-center p-4 border-b border-gray-200 hover:bg-green-50 transition-colors duration-200 gap-3 text-gray-800 font-medium no-underline"
             >
               <FiHome className="w-6 h-6 text-green-500" />
-              Home
+              {getTranslation('home', language)}
             </Link>
           </li>
           <li>
@@ -119,7 +117,7 @@ const Header = () => {
               className="flex items-center p-4 border-b border-gray-200 hover:bg-green-50 transition-colors duration-200 gap-3 text-gray-800 font-medium no-underline"
             >
               <FiCreditCard className="w-6 h-6 text-green-500" />
-              Wallet: ₹{walletBalance.toFixed(2)}
+              {getTranslation('wallet', language)}: ₹{walletBalance.toFixed(2)}
             </Link>
           </li>
           <li>
@@ -128,7 +126,7 @@ const Header = () => {
               className="flex items-center p-4 border-b border-gray-200 hover:bg-green-50 transition-colors duration-200 gap-3 text-gray-800 font-medium no-underline"
             >
               <FiPackage className="w-6 h-6 text-green-500" />
-              My Orders
+              {getTranslation('myOrders', language)}
             </Link>
           </li>
           <li>
@@ -137,7 +135,7 @@ const Header = () => {
               className="flex items-center p-4 border-b border-gray-200 hover:bg-green-50 transition-colors duration-200 gap-3 text-gray-800 font-medium no-underline"
             >
               <FiShare2 className="w-6 h-6 text-green-500" />
-              Refer
+              {getTranslation('refer', language)}
             </Link>
           </li>
           <li>
@@ -147,7 +145,7 @@ const Header = () => {
               className="flex items-center p-4 border-b border-gray-200 hover:bg-green-50 transition-colors duration-200 gap-3 text-gray-800 font-medium no-underline"
             >
               <FiPhone className="w-6 h-6 text-green-500" />
-              Contact Us
+              {getTranslation('contactUs', language)}
             </Link>
           </li>
           <li>
@@ -156,7 +154,7 @@ const Header = () => {
               className="flex items-center p-4 border-b border-gray-200 hover:bg-green-50 transition-colors duration-200 gap-3 text-gray-800 font-medium no-underline"
             >
               <FiInfo className="w-6 h-6 text-green-500" />
-              About
+              {getTranslation('about', language)}
             </Link>
           </li>
         </ul>
