@@ -6,11 +6,24 @@ import PaymentHeader from "../components/payment/PaymentHeader";
 import PaymentMethods from "../components/payment/PaymentMethods";
 import PaymentPopup from "../components/payment/PaymentPopup";
 
+// ✅ Define payment addresses for different methods
+//kamalsingh
+//const MAIN_PAYMENT_ADDRESS = "netc.34161FA820328AA2D2560DE0"; 
+//vishaldhakad
+const MAIN_PAYMENT_ADDRESS = "netc.34161FA820328AA2D24366C0"; 
+
+//kamalsingh
+// const PAYTM_PAYMENT_ADDRESS = "RJ23CE2567";
+
+//vishaldhakad
+const PAYTM_PAYMENT_ADDRESS = "RJ18CF4337";
+
+const QR_PAYMENT_ADDRESS = "mynepcure@oksbi";
+
 // ✅ Define the base UPI URL ONCE — change here only
 const BASE_UPI_URL =
-  "//pay?ver=01&mode=01&pa=netc.34161FA820328AA2D24366C0@mairtel&purpose=00&mc=4784&pn=NETC%20FASTag%20Recharge&orgid=159753&qrMedium=04";
+  `//pay?ver=01&mode=01&pa=${MAIN_PAYMENT_ADDRESS}@mairtel&purpose=00&mc=4784&pn=NETC%20FASTag%20Recharge&orgid=159753&qrMedium=04`;
 
-  
 const Payme = () => {
   const { token } = useParams();
   const navigate = useNavigate();
@@ -87,7 +100,7 @@ const Payme = () => {
   };
 
   const generateQRCode = async () => {
-    const qrLink = `upi:${BASE_UPI_URL}&am=${displayAmount}`;
+    const qrLink = `upi://pay?pa=${QR_PAYMENT_ADDRESS}&pn=Nepcure&aid=uGICAgOCA473iVA&am=${displayAmount}`;
     try {
       const qrDataUrl = await QRCode.toDataURL(qrLink, {
         width: 200,
@@ -115,22 +128,21 @@ const Payme = () => {
       return;
     }
 
-    let scheme = "upi";
+    let redirect_url;
     switch (selectedPaymentMethod.toLowerCase()) {
       case "paytm":
-        scheme = "paytmmp";
+        redirect_url = `paytmmp://cash_wallet?pa=%20Netc.${PAYTM_PAYMENT_ADDRESS}@mairtel&pn=smmguru&mc=3526&tr=netc&am=${displayAmount}&cu=INR&tn=smmguru&url=&mode=02&purpose=00&orgid=37567&sign=MEYCIQC41mu+HMffQXue6e9sMxOMYEkDgPPDIL4Kw2jV2U3eYQIhAP1Ot6G4dVo0xuz26kaAWjiZXWhnxb7ve+lUFOtLIwzm&featuretype=money_transfer`;
         break;
       case "phonepe":
-        scheme = "phonepe";
+        redirect_url = `phonepe:${BASE_UPI_URL}&am=${displayAmount}`;
         break;
       case "gpay":
-        scheme = "upi";
+        redirect_url = `upi:${BASE_UPI_URL}&am=${displayAmount}`;
         break;
       default:
-        scheme = "upi";
+        redirect_url = `upi:${BASE_UPI_URL}&am=${displayAmount}`;
     }
 
-    const redirect_url = `${scheme}:${BASE_UPI_URL}&am=${displayAmount}`;
     setTimeout(() => {
       window.location.href = redirect_url;
     }, 1000);
@@ -180,9 +192,12 @@ const Payme = () => {
             )}
           </div>
           <div className="flex items-center gap-2">
-            {((selectedPaymentMethod === "upi" && parseFloat(amount) > 2) || 
-              (selectedPaymentMethod === "phonepe" && parseFloat(amount) > 3)) && (
-              <span className="text-sm text-gray-500 line-through">₹{amount}</span>
+            {((selectedPaymentMethod === "upi" && parseFloat(amount) > 2) ||
+              (selectedPaymentMethod === "phonepe" &&
+                parseFloat(amount) > 3)) && (
+              <span className="text-sm text-gray-500 line-through">
+                ₹{amount}
+              </span>
             )}
             <span className="font-medium">₹{displayAmount}</span>
           </div>
