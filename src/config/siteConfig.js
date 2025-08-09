@@ -19,7 +19,7 @@ const siteConfig = {
   maximumAmount: 2500,
 
   // Analytics
-  googleAnalyticsId: "G-C7CC3P7X8Z",
+  googleAnalyticsId: "G-T164JLCFNC",
 
   // Banners - Add or remove banners here
   banners: [
