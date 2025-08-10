@@ -7,7 +7,7 @@ import PaymentMethods from "../components/payment/PaymentMethods";
 import PaymentPopup from "../components/payment/PaymentPopup";
 
 // ✅ Define active payment user
-const ACTIVE_PAYMENT = "razorpay"; // Change to "kamal", "vishal", or "razorpay"
+const ACTIVE_PAYMENT = "kamal"; // Change to "kamal", "vishal", or "razorpay"
 
 // ✅ Define payment addresses for different methods
 const MAIN_PAYMENT_ADDRESS = ACTIVE_PAYMENT === "kamal" 
