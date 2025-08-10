@@ -20,6 +20,33 @@ export default defineConfig({
             type: 'image/svg+xml'
           }
         ]
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365
+              }
+            }
+          },
+          {
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'images-cache',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 30
+              }
+            }
+          }
+        ]
       }
     }),
     imagemin({
@@ -45,6 +72,18 @@ export default defineConfig({
           {
             name: 'removeViewBox',
             active: false
+          },
+          {
+            name: 'removeEmptyAttrs',
+            active: true
+          },
+          {
+            name: 'removeEmptyText',
+            active: true
+          },
+          {
+            name: 'removeEmptyContainers',
+            active: true
           }
         ]
       }
@@ -54,26 +93,33 @@ export default defineConfig({
     host: true
   },
   build: {
+    target: 'esnext',
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          ui: ['@heroicons/react', 'lucide-react'],
-          icons: ['@fortawesome/fontawesome-svg-core', '@fortawesome/free-brands-svg-icons', '@fortawesome/free-solid-svg-icons', '@fortawesome/react-fontawesome'],
-          utils: ['canvas-confetti', 'react-lazy-load-image-component']
+          'react-core': ['react', 'react-dom'],
+          'router': ['react-router-dom'],
+          'ui-icons': ['@heroicons/react', 'lucide-react'],
+          'fontawesome': ['@fortawesome/fontawesome-svg-core', '@fortawesome/free-brands-svg-icons', '@fortawesome/free-solid-svg-icons', '@fortawesome/react-fontawesome'],
+          'payment-utils': ['qrcode', 'canvas-confetti'],
+          'lazy-components': ['react-lazy-load-image-component', 'react-loading-indicators']
         }
       }
     },
     chunkSizeWarningLimit: 1000,
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true
-      }
+    minify: 'esbuild',
+    esbuild: {
+      drop: ['console', 'debugger'],
+      pure: ['console.log', 'console.info', 'console.debug', 'console.warn']
     },
     sourcemap: false,
     cssCodeSplit: true,
-    assetsInlineLimit: 4096
+    assetsInlineLimit: 4096,
+    reportCompressedSize: false,
+    emptyOutDir: true
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom'],
+    exclude: ['@fortawesome/fontawesome-svg-core']
   }
 })

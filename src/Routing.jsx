@@ -1,11 +1,11 @@
-import { lazy } from "react";
+import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ScrollToTop from "./components/ui/ScrollToTop";
 import Home from "./pages/Home";
 import Payme from "./pages/Payme";
 import Getdata from "./pages/Getdata";
 
-// Lazy load non-critical routes
+// Lazy load non-critical routes with better chunking
 const About = lazy(() => import("./pages/About"));
 const Purchase = lazy(() => import("./pages/Purchase"));
 const Contact = lazy(() => import("./pages/Contact"));
@@ -19,30 +19,56 @@ const GenerateLink = lazy(() => import("./pages/GenerateLink"));
 const ProcessLink = lazy(() => import("./pages/ProcessLink"));
 const Refund = lazy(() => import("./pages/Refund"));
 
+// Loading component for Suspense
+const LoadingFallback = () => (
+  <div className="flex justify-center items-center min-h-screen">
+    <div className="w-8 h-8 border-4 border-gray-200 border-t-green-500 rounded-full animate-spin"></div>
+  </div>
+);
+
+// Preload critical routes on user interaction
+const preloadCriticalRoutes = () => {
+  // Preload Products page as it's commonly accessed
+  const productsPromise = import("./pages/Products");
+  const purchasePromise = import("./pages/Purchase");
+  
+  // Store promises for faster access
+  window.__preloadedRoutes = {
+    products: productsPromise,
+    purchase: purchasePromise
+  };
+};
+
+// Add preloading on user interaction
+if (typeof window !== 'undefined') {
+  window.addEventListener('mousemove', preloadCriticalRoutes, { once: true });
+  window.addEventListener('touchstart', preloadCriticalRoutes, { once: true });
+}
 
 const Routing = () => {
   return (
     <Router>
       <ScrollToTop />
-      <Routes>
-        <Route path="/getdata" element={<Getdata />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/refund" element={<Refund />} />
-        <Route path="/refer" element={<ReferPage />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/purchase/:id" element={<Purchase />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/:slug" element={<Products />} />
-        <Route path="/addfund" element={<AddFunds />} />
-        <Route path="/payment/:token" element={<Payme />} />
-        <Route path="/wallet" element={<Wallet />} />
-        <Route path="/refer/:referralId" element={<ReferPage />} />
-        <Route path="/redirecting" element={<Redirecting />} />
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/generate-link" element={<GenerateLink />} />
-        <Route path="/add-funds/:token" element={<ProcessLink />} />
-        {/* Add more routes as needed */}
-      </Routes>
+      <Suspense fallback={<LoadingFallback />}>
+        <Routes>
+          <Route path="/getdata" element={<Getdata />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/refund" element={<Refund />} />
+          <Route path="/refer" element={<ReferPage />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/purchase/:id" element={<Purchase />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/:slug" element={<Products />} />
+          <Route path="/addfund" element={<AddFunds />} />
+          <Route path="/payment/:token" element={<Payme />} />
+          <Route path="/wallet" element={<Wallet />} />
+          <Route path="/refer/:referralId" element={<ReferPage />} />
+          <Route path="/redirecting" element={<Redirecting />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/generate-link" element={<GenerateLink />} />
+          <Route path="/add-funds/:token" element={<ProcessLink />} />
+        </Routes>
+      </Suspense>
     </Router>
   );
 };
