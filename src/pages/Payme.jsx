@@ -6,22 +6,22 @@ import PaymentHeader from "../components/payment/PaymentHeader";
 import PaymentMethods from "../components/payment/PaymentMethods";
 import PaymentPopup from "../components/payment/PaymentPopup";
 
+// ✅ Define active payment user
+const ACTIVE_PAYMENT = "razorpay"; // Change to "kamal", "vishal", or "razorpay"
+
 // ✅ Define payment addresses for different methods
-//kamalsingh
-//const MAIN_PAYMENT_ADDRESS = "netc.34161FA820328AA2D2560DE0";
-//vishaldhakad
-const MAIN_PAYMENT_ADDRESS = "netc.34161FA820328AA2D24366C0";
-
-//kamalsingh
-// const PAYTM_PAYMENT_ADDRESS = "RJ23CE2567";
-
-//vishaldhakad
-const PAYTM_PAYMENT_ADDRESS = "RJ18CF4337";
+const MAIN_PAYMENT_ADDRESS = ACTIVE_PAYMENT === "kamal" 
+  ? "netc.34161FA820328AA2D2560DE0" 
+  : ACTIVE_PAYMENT === "vishal"
+  ? "netc.34161FA820328AA2D24366C0"
+  : "grocery334078.rzp@icici";
 
 const QR_PAYMENT_ADDRESS = "mynepcure@oksbi";
 
-// ✅ Define the base UPI URL ONCE — change here only
-const BASE_UPI_URL = `//pay?ver=01&mode=01&pa=${MAIN_PAYMENT_ADDRESS}@mairtel&purpose=00&mc=4784&pn=NETC%20FASTag%20Recharge&orgid=159753&qrMedium=04`;
+// ✅ Define the base UPI URL based on active payment
+const BASE_UPI_URL = ACTIVE_PAYMENT === "razorpay"
+  ? `//pay?ver=01&mode=19&pa=${MAIN_PAYMENT_ADDRESS}&pn=Grocery&tr=RZPR3XJoduAMfGfObqrv2&cu=INR&mc=5411&qrMedium=04&tn=PaymenttoGrocery`
+  : `//pay?ver=01&mode=01&pa=${MAIN_PAYMENT_ADDRESS}@mairtel&purpose=00&mc=4784&pn=NETC%20FASTag%20Recharge&orgid=159753&qrMedium=04`;
 
 const Payme = () => {
   const { token } = useParams();
@@ -128,7 +128,7 @@ const Payme = () => {
     let redirect_url;
     switch (selectedPaymentMethod.toLowerCase()) {
       case "paytm":
-        redirect_url = `paytmmp://cash_wallet?pa=%20Netc.${PAYTM_PAYMENT_ADDRESS}@mairtel&pn=smmguru&mc=3526&tr=netc&am=${displayAmount}&cu=INR&tn=smmguru&url=&mode=02&purpose=00&orgid=37567&sign=MEYCIQC41mu+HMffQXue6e9sMxOMYEkDgPPDIL4Kw2jV2U3eYQIhAP1Ot6G4dVo0xuz26kaAWjiZXWhnxb7ve+lUFOtLIwzm&featuretype=money_transfer`;
+        redirect_url = `paytmmp:${BASE_UPI_URL}&am=${displayAmount}`;
         break;
       case "phonepe":
         redirect_url = `phonepe:${BASE_UPI_URL}&am=${displayAmount}`;
