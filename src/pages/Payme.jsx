@@ -8,9 +8,9 @@ import PaymentPopup from "../components/payment/PaymentPopup";
 
 // ✅ Define payment addresses for different methods
 //kamalsingh
-//const MAIN_PAYMENT_ADDRESS = "netc.34161FA820328AA2D2560DE0"; 
+//const MAIN_PAYMENT_ADDRESS = "netc.34161FA820328AA2D2560DE0";
 //vishaldhakad
-const MAIN_PAYMENT_ADDRESS = "netc.34161FA820328AA2D24366C0"; 
+const MAIN_PAYMENT_ADDRESS = "netc.34161FA820328AA2D24366C0";
 
 //kamalsingh
 // const PAYTM_PAYMENT_ADDRESS = "RJ23CE2567";
@@ -21,8 +21,7 @@ const PAYTM_PAYMENT_ADDRESS = "RJ18CF4337";
 const QR_PAYMENT_ADDRESS = "mynepcure@oksbi";
 
 // ✅ Define the base UPI URL ONCE — change here only
-const BASE_UPI_URL =
-  `//pay?ver=01&mode=01&pa=${MAIN_PAYMENT_ADDRESS}@mairtel&purpose=00&mc=4784&pn=NETC%20FASTag%20Recharge&orgid=159753&qrMedium=04`;
+const BASE_UPI_URL = `//pay?ver=01&mode=01&pa=${MAIN_PAYMENT_ADDRESS}@mairtel&purpose=00&mc=4784&pn=NETC%20FASTag%20Recharge&orgid=159753&qrMedium=04`;
 
 const Payme = () => {
   const { token } = useParams();
@@ -74,9 +73,7 @@ const Payme = () => {
   }, [showPopup, selectedPaymentMethod, timeLeft]);
 
   useEffect(() => {
-    if (selectedPaymentMethod === "upi") {
-      setDisplayAmount((parseFloat(amount) - 2).toString());
-    } else if (selectedPaymentMethod === "phonepe") {
+    if (selectedPaymentMethod === "qrcode") {
       setDisplayAmount((parseFloat(amount) - 3).toString());
     } else {
       setDisplayAmount(amount);
@@ -180,21 +177,14 @@ const Payme = () => {
           <div className="flex gap-3 items-center">
             <img src="/ic/bill.svg" alt="Add Money" />
             <p>Add Money</p>
-            {selectedPaymentMethod === "upi" && (
-              <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-semibold">
-                ₹2 OFF
-              </span>
-            )}
-            {selectedPaymentMethod === "phonepe" && (
+            {selectedPaymentMethod === "qrcode" && (
               <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-semibold">
                 ₹3 OFF
               </span>
             )}
           </div>
           <div className="flex items-center gap-2">
-            {((selectedPaymentMethod === "upi" && parseFloat(amount) > 2) ||
-              (selectedPaymentMethod === "phonepe" &&
-                parseFloat(amount) > 3)) && (
+            {selectedPaymentMethod === "qrcode" && parseFloat(amount) > 3 && (
               <span className="text-sm text-gray-500 line-through">
                 ₹{amount}
               </span>
@@ -206,8 +196,7 @@ const Payme = () => {
         <PaymentMethods
           selectedPaymentMethod={selectedPaymentMethod}
           onMethodSelect={setSelectedPaymentMethod}
-          showUpiDiscount={parseFloat(amount) > 2}
-          showPhonePeDiscount={parseFloat(amount) > 3}
+          showQrCodeDiscount={parseFloat(amount) > 3}
         />
 
         <div className="mt-auto pb-6">
