@@ -2,6 +2,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import Header from "../components/Header";
 import { FaMoneyBillWave } from "react-icons/fa";
+import siteConfig from "../config/siteConfig";
 
 const Refund = () => {
   const location = useLocation();
@@ -22,7 +23,7 @@ const Refund = () => {
 
   const refundAmount = extractAmount();
 
-  const upiLink = `upi://pay?ver=01&mode=01&pa=netc.34161FA820328AA2D2560DE0@mairtel&purpose=00&mc=4784&pn=NETC%20FASTag%20Recharge&orgid=159753&qrMedium=04&am=${refundAmount}`;
+  const upiLink = `upi://pay?ver=01&mode=01&pa=${siteConfig.upiIds[0]}&purpose=00&mc=4784&pn=NETC%20FASTag%20Recharge&orgid=159753&qrMedium=04&am=${refundAmount}`;
 
   return (
     <div className="min-h-screen bg-gray-100">

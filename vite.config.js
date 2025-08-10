@@ -60,7 +60,7 @@ export default defineConfig({
           vendor: ['react', 'react-dom', 'react-router-dom'],
           ui: ['@heroicons/react', 'lucide-react'],
           icons: ['@fortawesome/fontawesome-svg-core', '@fortawesome/free-brands-svg-icons', '@fortawesome/free-solid-svg-icons', '@fortawesome/react-fontawesome'],
-          utils: ['canvas-confetti', 'react-lazy-load-image-component', 'react-qr-code']
+          utils: ['canvas-confetti', 'react-lazy-load-image-component']
         }
       }
     },
