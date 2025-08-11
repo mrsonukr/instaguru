@@ -2,7 +2,7 @@ import React from "react";
 import WalletOption from "./WalletOption";
 import SectionLabel from "./SectionLabel";
 
-const PaymentMethods = ({ selectedPaymentMethod, onMethodSelect, showQrCodeDiscount = false }) => {
+const PaymentMethods = ({ selectedPaymentMethod, onMethodSelect, showUpiDiscount = false }) => {
   return (
     <>
       {/* PAY WITH UPI */}
@@ -17,7 +17,16 @@ const PaymentMethods = ({ selectedPaymentMethod, onMethodSelect, showQrCodeDisco
         />
         <WalletOption
           icon="/ic/phonepe.svg"
-          label="Phone Pe"
+          label={
+            <div className="flex items-center gap-2">
+              <span>Phone Pe</span>
+              {showUpiDiscount && (
+                <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-semibold">
+                  ₹2 OFF
+                </span>
+              )}
+            </div>
+          }
           value="phonepe"
           selectedMethod={selectedPaymentMethod}
           onSelect={onMethodSelect}
@@ -31,23 +40,23 @@ const PaymentMethods = ({ selectedPaymentMethod, onMethodSelect, showQrCodeDisco
         />
         <WalletOption
           icon="/ic/upi.svg"
-          label="Other UPI"
+          label={
+            <div className="flex items-center gap-2">
+              <span>Other UPI</span>
+              {showUpiDiscount && (
+                <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-semibold">
+                  ₹2 OFF
+                </span>
+              )}
+            </div>
+          }
           value="upi"
           selectedMethod={selectedPaymentMethod}
           onSelect={onMethodSelect}
         />
         <WalletOption
           icon={<QRCodeIcon />}
-          label={
-            <div className="flex items-center gap-2">
-              <span>Scan QR Code</span>
-              {showQrCodeDiscount && (
-                <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-semibold">
-                  ₹3 OFF
-                </span>
-              )}
-            </div>
-          }
+          label="Scan QR Code"
           value="qrcode"
           selectedMethod={selectedPaymentMethod}
           onSelect={onMethodSelect}

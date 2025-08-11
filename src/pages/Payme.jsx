@@ -73,8 +73,8 @@ const Payme = () => {
   }, [showPopup, selectedPaymentMethod, timeLeft]);
 
   useEffect(() => {
-    if (selectedPaymentMethod === "qrcode") {
-      setDisplayAmount((parseFloat(amount) - 3).toString());
+    if (["phonepe", "upi"].includes(selectedPaymentMethod)) {
+      setDisplayAmount((parseFloat(amount) - 2).toString());
     } else {
       setDisplayAmount(amount);
     }
@@ -173,31 +173,31 @@ const Payme = () => {
       <div className="px-5 flex flex-col">
         <PaymentHeader onBack={handleBack} />
 
-        <div className="flex items-center justify-between my-4">
-          <div className="flex gap-3 items-center">
-            <img src="/ic/bill.svg" alt="Add Money" />
-            <p>Add Money</p>
-            {selectedPaymentMethod === "qrcode" && (
-              <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-semibold">
-                ₹3 OFF
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            {selectedPaymentMethod === "qrcode" && parseFloat(amount) > 3 && (
-              <span className="text-sm text-gray-500 line-through">
-                ₹{amount}
-              </span>
-            )}
-            <span className="font-medium">₹{displayAmount}</span>
-          </div>
-        </div>
+                 <div className="flex items-center justify-between my-4">
+           <div className="flex gap-3 items-center">
+             <img src="/ic/bill.svg" alt="Add Money" />
+             <p>Add Money</p>
+                           {["phonepe", "upi"].includes(selectedPaymentMethod) && (
+                <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-semibold">
+                  ₹2 OFF
+                </span>
+              )}
+           </div>
+           <div className="flex items-center gap-2">
+                           {["phonepe", "upi"].includes(selectedPaymentMethod) && parseFloat(amount) > 2 && (
+                <span className="text-sm text-gray-500 line-through">
+                  ₹{amount}
+                </span>
+              )}
+             <span className="font-medium">₹{displayAmount}</span>
+           </div>
+         </div>
 
-        <PaymentMethods
-          selectedPaymentMethod={selectedPaymentMethod}
-          onMethodSelect={setSelectedPaymentMethod}
-          showQrCodeDiscount={parseFloat(amount) > 3}
-        />
+                 <PaymentMethods
+           selectedPaymentMethod={selectedPaymentMethod}
+           onMethodSelect={setSelectedPaymentMethod}
+           showUpiDiscount={parseFloat(amount) > 2}
+         />
 
         <div className="mt-auto pb-6">
           <button
