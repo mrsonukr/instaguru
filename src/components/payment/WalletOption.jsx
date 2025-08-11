@@ -21,7 +21,7 @@ const WalletOption = ({ icon, label, value, selectedMethod, onSelect }) => {
     <div
       onClick={() => onSelect(value)}
       className={`flex items-center justify-between my-2 cursor-pointer p-3 rounded-lg transition-colors ${
-        selectedMethod === value ? 'bg-gray-50' : 'hover:bg-gray-50'
+        selectedMethod === value ? 'bg-gray-50' : 'hover:white'
       }`}
     >
       <div className="flex items-center gap-4">
