@@ -48,8 +48,13 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip non-GET requests
-  if (request.method !== 'GET') {
+  // Skip non-GET requests and non-http(s) requests
+  if (request.method !== 'GET' || !url.protocol.startsWith('http')) {
+    return;
+  }
+
+  // Skip requests that might cause redirect issues
+  if (url.pathname.includes('redirect') || url.pathname.includes('auth') || url.search.includes('redirect')) {
     return;
   }
 
@@ -59,7 +64,16 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       caches.match(request)
         .then((response) => {
-          return response || fetch(request);
+          return response || fetch(request).then(fetchResponse => {
+            // Don't cache redirects
+            if (fetchResponse.redirected || fetchResponse.status >= 300 && fetchResponse.status < 400) {
+              return fetchResponse;
+            }
+            return caches.open(DYNAMIC_CACHE).then((cache) => {
+              cache.put(request, fetchResponse.clone());
+              return fetchResponse;
+            });
+          });
         })
     );
   } else if (url.pathname.startsWith('/ic/') || url.pathname.startsWith('/banner/')) {
@@ -71,6 +85,10 @@ self.addEventListener('fetch', (event) => {
             return response;
           }
           return fetch(request).then((fetchResponse) => {
+            // Don't cache redirects
+            if (fetchResponse.redirected || fetchResponse.status >= 300 && fetchResponse.status < 400) {
+              return fetchResponse;
+            }
             return caches.open(DYNAMIC_CACHE).then((cache) => {
               cache.put(request, fetchResponse.clone());
               return fetchResponse;
@@ -84,6 +102,10 @@ self.addEventListener('fetch', (event) => {
       caches.match(request)
         .then((response) => {
           const fetchPromise = fetch(request).then((fetchResponse) => {
+            // Don't cache redirects
+            if (fetchResponse.redirected || fetchResponse.status >= 300 && fetchResponse.status < 400) {
+              return fetchResponse;
+            }
             return caches.open(DYNAMIC_CACHE).then((cache) => {
               cache.put(request, fetchResponse.clone());
               return fetchResponse;
@@ -93,9 +115,19 @@ self.addEventListener('fetch', (event) => {
         })
     );
   } else {
-    // Other requests - network first
+    // Other requests - network first, but don't cache redirects
     event.respondWith(
       fetch(request)
+        .then((fetchResponse) => {
+          // Don't cache redirects
+          if (fetchResponse.redirected || fetchResponse.status >= 300 && fetchResponse.status < 400) {
+            return fetchResponse;
+          }
+          return caches.open(DYNAMIC_CACHE).then((cache) => {
+            cache.put(request, fetchResponse.clone());
+            return fetchResponse;
+          });
+        })
         .catch(() => {
           return caches.match(request);
         })

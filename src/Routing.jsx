@@ -18,6 +18,7 @@ const Orders = lazy(() => import("./pages/Orders"));
 const GenerateLink = lazy(() => import("./pages/GenerateLink"));
 const ProcessLink = lazy(() => import("./pages/ProcessLink"));
 const Refund = lazy(() => import("./pages/Refund"));
+const HowToPurchase = lazy(() => import("./pages/HowToPurchase"));
 
 // Loading component for Suspense - Removed loading animation
 const LoadingFallback = () => null;
@@ -63,6 +64,7 @@ const Routing = () => {
           <Route path="/orders" element={<Orders />} />
           <Route path="/generate-link" element={<GenerateLink />} />
           <Route path="/add-funds/:token" element={<ProcessLink />} />
+          <Route path="/how-to-purchase" element={<HowToPurchase />} />
         </Routes>
       </Suspense>
     </Router>
