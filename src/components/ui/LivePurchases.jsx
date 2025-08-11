@@ -133,14 +133,14 @@ const LivePurchases = () => {
   useEffect(() => {
     setPurchases(Array.from({ length: 4 }, () => generatePurchase()));
     const addPurchaseTimer = setInterval(() => {
-      const count = Math.floor(Math.random() * 4);
+      const count = Math.floor(Math.random() * 2) + 1; // Reduced from 0-4 to 1-2
       if (count > 0) {
         setPurchases(prev => {
           const newPurchases = Array.from({ length: count }, () => generatePurchase());
           return [...newPurchases, ...prev].slice(0, 5);
         });
       }
-    }, 1000);
+    }, 3000); // Increased from 1000ms to 3000ms (3 seconds)
     return () => clearInterval(addPurchaseTimer);
   }, []);
 
