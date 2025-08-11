@@ -1,66 +1,35 @@
 import React from "react";
 import WalletOption from "./WalletOption";
 import SectionLabel from "./SectionLabel";
+import { getPaymentMethodsWithOffers, hasDiscount, getDiscount } from "../../config/paymentOffers";
 
-const PaymentMethods = ({ selectedPaymentMethod, onMethodSelect, showUpiDiscount = false }) => {
+const PaymentMethods = ({ selectedPaymentMethod, onMethodSelect, amount = 0 }) => {
   return (
     <>
       {/* PAY WITH UPI */}
       <SectionLabel text="PAY WITH" icon="/ic/upi.png" />
       <div className="flex flex-col py-5 flex-grow">
-        <WalletOption
-          icon="/ic/paytm.svg"
-          label="PayTM"
-          value="paytm"
-          selectedMethod={selectedPaymentMethod}
-          onSelect={onMethodSelect}
-        />
-        <WalletOption
-          icon="/ic/phonepe.svg"
-          label={
-            <div className="flex items-center gap-2">
-              <span>Phone Pe</span>
-              {showUpiDiscount && (
-                <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-semibold">
-                  ₹2 OFF
-                </span>
-              )}
-            </div>
-          }
-          value="phonepe"
-          selectedMethod={selectedPaymentMethod}
-          onSelect={onMethodSelect}
-        />
-        <WalletOption
-          icon="/ic/gpay.svg"
-          label="Google Pay"
-          value="gpay"
-          selectedMethod={selectedPaymentMethod}
-          onSelect={onMethodSelect}
-        />
-        <WalletOption
-          icon="/ic/upi.svg"
-          label={
-            <div className="flex items-center gap-2">
-              <span>Other UPI</span>
-              {showUpiDiscount && (
-                <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-semibold">
-                  ₹2 OFF
-                </span>
-              )}
-            </div>
-          }
-          value="upi"
-          selectedMethod={selectedPaymentMethod}
-          onSelect={onMethodSelect}
-        />
-        <WalletOption
-          icon={<QRCodeIcon />}
-          label="Scan QR Code"
-          value="qrcode"
-          selectedMethod={selectedPaymentMethod}
-          onSelect={onMethodSelect}
-        />
+        {getPaymentMethodsWithOffers().map((method) => (
+          <WalletOption
+            key={method.value}
+            icon={method.icon === "qr" ? <QRCodeIcon /> : method.icon}
+            label={
+              hasDiscount(method.value) && amount > getDiscount(method.value) ? (
+                <div className="flex items-center gap-2">
+                  <span>{method.label}</span>
+                  <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-semibold">
+                    ₹{getDiscount(method.value)} OFF
+                  </span>
+                </div>
+              ) : (
+                method.label
+              )
+            }
+            value={method.value}
+            selectedMethod={selectedPaymentMethod}
+            onSelect={onMethodSelect}
+          />
+        ))}
       </div>
     </>
   );

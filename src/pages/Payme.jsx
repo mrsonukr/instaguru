@@ -5,6 +5,7 @@ import NoCopyText from "../components/ui/NoCopyText";
 import PaymentHeader from "../components/payment/PaymentHeader";
 import PaymentMethods from "../components/payment/PaymentMethods";
 import PaymentPopup from "../components/payment/PaymentPopup";
+import { getDiscountedAmount, hasDiscount, getDiscount } from "../config/paymentOffers";
 
 // ✅ Define active payment user
 const ACTIVE_PAYMENT = "kamal"; // Change to "kamal", "vishal", or "razorpay"
@@ -73,11 +74,8 @@ const Payme = () => {
   }, [showPopup, selectedPaymentMethod, timeLeft]);
 
   useEffect(() => {
-    if (["phonepe", "upi"].includes(selectedPaymentMethod)) {
-      setDisplayAmount((parseFloat(amount) - 2).toString());
-    } else {
-      setDisplayAmount(amount);
-    }
+    const discountedAmount = getDiscountedAmount(amount, selectedPaymentMethod);
+    setDisplayAmount(discountedAmount.toString());
   }, [selectedPaymentMethod, amount]);
 
   const handleBack = () => {
@@ -177,14 +175,14 @@ const Payme = () => {
            <div className="flex gap-3 items-center">
              <img src="/ic/bill.svg" alt="Add Money" />
              <p>Add Money</p>
-                           {["phonepe", "upi"].includes(selectedPaymentMethod) && (
+                           {hasDiscount(selectedPaymentMethod) && (
                 <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-semibold">
-                  ₹2 OFF
+                  ₹{getDiscount(selectedPaymentMethod)} OFF
                 </span>
               )}
            </div>
            <div className="flex items-center gap-2">
-                           {["phonepe", "upi"].includes(selectedPaymentMethod) && parseFloat(amount) > 2 && (
+                           {hasDiscount(selectedPaymentMethod) && parseFloat(amount) > getDiscount(selectedPaymentMethod) && (
                 <span className="text-sm text-gray-500 line-through">
                   ₹{amount}
                 </span>
@@ -193,11 +191,11 @@ const Payme = () => {
            </div>
          </div>
 
-                 <PaymentMethods
-           selectedPaymentMethod={selectedPaymentMethod}
-           onMethodSelect={setSelectedPaymentMethod}
-           showUpiDiscount={parseFloat(amount) > 2}
-         />
+                           <PaymentMethods
+            selectedPaymentMethod={selectedPaymentMethod}
+            onMethodSelect={setSelectedPaymentMethod}
+            amount={parseFloat(amount)}
+          />
 
         <div className="mt-auto pb-6">
           <button
