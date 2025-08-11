@@ -19,12 +19,8 @@ const GenerateLink = lazy(() => import("./pages/GenerateLink"));
 const ProcessLink = lazy(() => import("./pages/ProcessLink"));
 const Refund = lazy(() => import("./pages/Refund"));
 
-// Loading component for Suspense
-const LoadingFallback = () => (
-  <div className="flex justify-center items-center min-h-screen">
-    <div className="w-8 h-8 border-4 border-gray-200 border-t-green-500 rounded-full animate-spin"></div>
-  </div>
-);
+// Loading component for Suspense - Removed loading animation
+const LoadingFallback = () => null;
 
 // Preload critical routes on user interaction
 const preloadCriticalRoutes = () => {
