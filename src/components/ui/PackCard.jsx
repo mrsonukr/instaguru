@@ -59,7 +59,7 @@ const PackCard = ({ color = "red", title, description, price, link, packId }) =>
         className={`flex-shrink-0 text-white text-sm px-4 py-2 rounded-full flex items-center gap-1 ${variant.buttonBg} ${variant.buttonHover}`}
       >
         <div>
-          <span className="line-through mr-1">₹{price*2}</span>
+          {/* <span className="line-through mr-1">₹{price*2}</span> */}
         ₹{price}
 
         </div>
