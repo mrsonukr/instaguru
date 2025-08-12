@@ -55,7 +55,7 @@ const AutoSlider = () => {
         {siteConfig.banners.map((banner) => (
           <SwiperSlide key={banner.id}>
             <div 
-              className="relative w-full aspect-[2000/734] cursor-pointer bg-gray-100"
+              className="relative w-full aspect-[2000/734] cursor-pointer bg-gray-100 rounded-xl"
               onClick={() => handleBannerClick(banner.id)}
             >
               {!loadedImages[banner.id] && (
