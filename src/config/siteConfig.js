@@ -15,7 +15,7 @@ const siteConfig = {
 
   // Payment Configuration - Multiple UPI IDs
   upiIds: ["netc.34161FA820328AA2D2560DE0@mairtel"],
-  minimumAmount: 75,
+  minimumAmount: 35,
   maximumAmount: 3500,
 
   // Analytics
