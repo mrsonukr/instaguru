@@ -35,7 +35,7 @@ const AutoSlider = () => {
         break;
       case 4:
         // Banner 4 - Open WhatsApp
-        window.open("https://wa.me/917225979671?text=Hello%20SmmGuru", "_blank");
+        window.open("https://wa.me/917470729419?text=Hello%20SmmGuru", "_blank");
         break;
       default:
         break;
