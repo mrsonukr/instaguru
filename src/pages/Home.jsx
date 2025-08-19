@@ -10,7 +10,7 @@ import { updatePageSEO, addStructuredData } from "../utils/seoUtils";
 import { useLanguage } from "../context/LanguageContext";
 import { translateCategories } from "../utils/translationUtils";
 import { getTranslation } from "../data/translations";
-import LivePurchases from "../components/ui/LivePurchases";
+// import LivePurchases from "../components/ui/LivePurchases";
 
 const Home = () => {
   const { language } = useLanguage();
@@ -76,7 +76,7 @@ const Home = () => {
         </div>
       </a>
       
-      <LivePurchases />
+      {/* <LivePurchases /> */}
       
       <div className="text-center mt-6 ">
         <p className="text-lg font-semibold mt-4 mb-2 gradient-text">
