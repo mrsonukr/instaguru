@@ -23,13 +23,7 @@ const siteConfig = {
 
   // Banners - Add or remove banners here
   banners: [
-    {
-      id: 1,
-      src: "/banner/banner0.webp",
-      alt: "Banner 0",
-      width: 1000,
-      height: 367,
-    },
+   
     {
       id: 2,
       src: "/banner/banner1.webp",

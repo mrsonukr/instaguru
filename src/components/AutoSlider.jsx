@@ -21,9 +21,6 @@ const AutoSlider = () => {
 
   const handleBannerClick = (bannerId) => {
     switch (bannerId) {
-      case 1:
-        // Banner 1 - Redirect to purchase page
-        break;
       case 2:
         // Banner 2 - Redirect to purchase page
         navigate("/purchase/11004");
